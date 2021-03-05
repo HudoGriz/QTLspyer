@@ -464,25 +464,37 @@ shinyServer(function(input, output, session) {
   output$raw_fastqcs <- renderUI({
     tagList(
       fluidPage(
-        inputPanel(
-          width = 6,
-          column(
-            width = 12,
-            actionBttn(
-              inputId = "look_for_fastqc_untrimmed",
-              label = "Check for fastQC files",
-              style = "material-flat",
-              color = "primary",
-              size = "lg"
+        column(
+          width = 12,
+          inputPanel(
+            column(
+              width = 12,
+              actionBttn(
+                inputId = "look_for_fastqc",
+                label = "Check for fastQC files",
+                style = "material-flat",
+                color = "primary",
+                size = "lg"
+              )
             ),
-            uiOutput("tabs_untrimmed")
-          )
+            column(
+              width = 12,
+              actionBttn(
+                inputId = "clear_fastqc",
+                label = "Clear fastQC files cache",
+                style = "material-flat",
+                color = "primary",
+                size = "lg"
+              )
+            )
+          ),
+          uiOutput("tabs_untrimmed")
         )
       )
     )
   })
 
-  observeEvent(input$look_for_fastqc_untrimmed, {
+  observeEvent(input$look_for_fastqc, {
     fastqc_raw <- list.files(path = "../output/fastqc/untrimmed/", pattern = "\\.html$")
     fastqc_tri <- list.files(path = "../output/fastqc/trimmed/", pattern = "\\.html$")
     
@@ -524,6 +536,25 @@ shinyServer(function(input, output, session) {
         hr(),
         title = "Trimmed",
         htmls_trim
+      )
+    })
+  })
+
+  observeEvent(input$clear_fastqc, {
+    # browser()
+    path <- "www/fastqc"
+    files <- list.files(pattern = "\\.html$", recursive = TRUE, path = path)
+    
+    for (file in files) {
+       file.remove(paste(path, file, sep = "/"))
+    }
+
+        output$tabs_untrimmed <- renderUI({
+      tagList(
+        hr(),
+        title = "Untrimmed",
+        hr(),
+        title = "Trimmed"
       )
     })
   })
@@ -637,7 +668,17 @@ shinyServer(function(input, output, session) {
       )
       return()
     }
-    
+
+    if (input$high_bulk == input$high_bulk) {
+      sendSweetAlert(
+        session = session,
+        title = "Error",
+        text = "The bulks can't be the same!",
+        type = "error"
+      )
+      return()
+    }
+
     # rpogres indicator
     progress <- shiny::Progress$new()
     on.exit(progress$close())
@@ -647,7 +688,7 @@ shinyServer(function(input, output, session) {
 
     # Asign bulks
     HighBulk <- input$high_bulk
-    LowBulk <- input$low_bulk
+    LowBulk <- input$high_bulk
 
     # Import vcf tabels
     progress$inc(1 / n, detail = paste("Reading tabel")) # 1
