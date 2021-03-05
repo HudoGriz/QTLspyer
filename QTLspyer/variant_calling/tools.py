@@ -4,6 +4,7 @@ from plumbum import local as Cmd
 from plumbum import TEE
 from functions import enable_logging, interpret_result, write_result_to_debug
 
+
 class QtlTolls:
     """Calls QTL tools to run in docker container"""
 
@@ -17,8 +18,10 @@ class QtlTolls:
         os.chdir('..')
         self.home = os.getcwd()
 
-        self.logger = enable_logging(log_name='process_logger', log_file='log/sample_processing.log')
-        self.st_logger = enable_logging(log_name='standard_output_logger', log_file='log/standard_output.log')
+        self.logger = enable_logging(
+            log_name='process_logger', log_file='log/sample_processing.log')
+        self.st_logger = enable_logging(
+            log_name='standard_output_logger', log_file='log/standard_output.log')
 
         # Paths, files and parameters needed for successful pipeline run.
         # Paths on the host.
@@ -48,7 +51,8 @@ class QtlTolls:
         sample_names.sort()
         if single_reads == "TRUE":
             for data in sample_names:
-                ori_samples.update({"_".join(data[0][:marker_position]): data[1]})
+                ori_samples.update(
+                    {"_".join(data[0][:marker_position]): data[1]})
         else:
             r1 = 'empty'
             r2 = r1
@@ -58,7 +62,8 @@ class QtlTolls:
                 if 'R2' in data[0]:
                     r2 = data[1]
                 if r1 != 'empty' and r2 != 'empty':
-                    ori_samples.update({"_".join(data[0][:marker_position]): {"R1": r1, "R2": r2}})
+                    ori_samples.update(
+                        {"_".join(data[0][:marker_position]): {"R1": r1, "R2": r2}})
                     r1 = 'empty'
                     r2 = r1
 
@@ -97,7 +102,8 @@ class QtlTolls:
         )
 
         # Make index referencing
-        result = Cmd["samtools"]["faidx", fasta_ref_file_path] & TEE(retcode=None)
+        result = Cmd["samtools"]["faidx",
+                                 fasta_ref_file_path] & TEE(retcode=None)
 
         interpret_result(
             log=self.logger,
@@ -111,7 +117,8 @@ class QtlTolls:
         # Make dictionary
         if not os.path.isfile(ref_name_path + '.dict'):
 
-            args = [self.picard, 'CreateSequenceDictionary', f'REFERENCE={fasta_ref_file_path}']
+            args = [self.picard, 'CreateSequenceDictionary',
+                    f'REFERENCE={fasta_ref_file_path}']
 
             result = Cmd['java']['-jar'][args] & TEE(retcode=None)
 
@@ -142,32 +149,34 @@ class QtlTolls:
             )
 
     def fastqc(self, status, sample, in1, in2):
-        """Create a report of fasta file quiality."""
+        """Create a report of fasta file quality."""
         os.chdir(self.local_input)
 
-        result = Cmd['fastqc'][ in1, in2, '-o', f'{self.local_output}/fastqc/{status}/'] & TEE(retcode=None)
+        result = Cmd['fastqc'][in1, in2, '-o',
+                               f'{self.local_output}/fastqc/{status}/'] & TEE(retcode=None)
 
         interpret_result(
             log=self.logger,
             so_logger=self.st_logger,
             report=result,
             logger_mes=f'[Fastqc] Sample {sample} analysed successfully.',
-            logger_error_mes=f'[FastQC] For some reason analyses of {sample} was not successful.',
+            logger_error_mes=f'[FastQC] For some reason the analysis of {sample} was not successful.',
             runtime_error_mes=f'FastQC failed ({sample}).'
         )
 
     def fastqc_single(self, status, sample, in1):
-        """Create a report of fasta file quiality."""
+        """Create a report of fasta file quality."""
         os.chdir(self.local_input)
 
-        result = Cmd['fastqc'][in1, '-o', f'{self.local_output}/fastqc/{status}/'] & TEE(retcode=None)
+        result = Cmd['fastqc'][in1, '-o',
+                               f'{self.local_output}/fastqc/{status}/'] & TEE(retcode=None)
 
         interpret_result(
             log=self.logger,
             so_logger=self.st_logger,
             report=result,
             logger_mes=f'[Fastqc] Sample {sample} analysed successfully.',
-            logger_error_mes=f'[FastQC] For some reason analyses of {sample} was not successful.',
+            logger_error_mes=f'[FastQC] For some reason the analysis of {sample} was not successful.',
             runtime_error_mes=f'FastQC failed ({sample}).'
         )
 
@@ -212,7 +221,7 @@ class QtlTolls:
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[BBduk] Sample {sample} trimmed successfully.',
-                logger_error_mes=f'[BBduk] For some reason trimming of {sample} was not successful.',
+                logger_error_mes=f'[BBduk] For some reason the trimming of {sample} was not successful.',
                 runtime_error_mes=f'BBduk failed ({sample}).'
             )
 
@@ -255,7 +264,7 @@ class QtlTolls:
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[BBduk] Sample {sample} trimmed successfully.',
-                logger_error_mes=f'[BBduk] For some reason trimming of {sample} was not successful.',
+                logger_error_mes=f'[BBduk] For some reason the trimming of {sample} was not successful.',
                 runtime_error_mes=f'BBduk failed ({sample}).'
             )
 
@@ -278,14 +287,15 @@ class QtlTolls:
             ]
 
             # run BWA
-            result = (bwa[args] | samtools['fixmate', '-m', '-', '-'] | samtools['sort', '-o', out_bam]) & TEE(retcode=None)
+            result = (bwa[args] | samtools['fixmate', '-m', '-', '-']
+                      | samtools['sort', '-o', out_bam]) & TEE(retcode=None)
 
             interpret_result(
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[BWA] Sample {sample} aligned successfully.',
-                logger_error_mes=f'[BWA] For some reason alignment of {sample} was not successful.',
+                logger_error_mes=f'[BWA] For some reason the alignment of {sample} was not successful.',
                 runtime_error_mes=f'BWA failed ({sample}).'
             )
 
@@ -310,14 +320,15 @@ class QtlTolls:
             ]
 
             # run BWA
-            result = (bwa[args] | samtools['fixmate', '-m', '-', '-'] | samtools['sort', '-o', out_bam]) & TEE(retcode=None)
+            result = (bwa[args] | samtools['fixmate', '-m', '-', '-']
+                      | samtools['sort', '-o', out_bam]) & TEE(retcode=None)
 
             interpret_result(
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[BWA] Sample {sample} aligned successfully.',
-                logger_error_mes=f'[BWA] For some reason alignment of {sample} was not successful.',
+                logger_error_mes=f'[BWA] For some reason the alignment of {sample} was not successful.',
                 runtime_error_mes=f'BWA failed ({sample}).'
             )
 
@@ -337,7 +348,7 @@ class QtlTolls:
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[Samtools index] Sample {sample} indexing successfully.',
-                logger_error_mes=f'[Samtools index] For some reason indexing of {sample} was not successful.',
+                logger_error_mes=f'[Samtools index] For some reasonthe indexing of {sample} was not successful.',
                 runtime_error_mes=f'Samtools index failed ({sample}).'
             )
 
@@ -366,7 +377,7 @@ class QtlTolls:
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[RG] Sample {sample} RG was successfully.',
-                logger_error_mes=f'[RG] For some reason RG of {sample} was not successful.',
+                logger_error_mes=f'[RG] For some reason the RG of {sample} was not successful.',
                 runtime_error_mes=f'RG failed ({sample}).'
             )
 
@@ -395,7 +406,7 @@ class QtlTolls:
                 so_logger=self.st_logger,
                 report=result,
                 logger_mes=f'[MD] Sample {sample} Marking duplicates was successfully.',
-                logger_error_mes=f'[MD] For some reason Marking duplicates of {sample} was not successful.',
+                logger_error_mes=f'[MD] For some reason the Marking duplicates of {sample} was not successful.',
                 runtime_error_mes=f'Marking duplicates failed ({sample}).'
             )
 
@@ -480,7 +491,7 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK HaplotypeCaller] Sample {sample} Calling germline SNPs and indels was successfully.',
+                logger_mes=f'[GATK HaplotypeCaller] Sample {sample} Calling germline SNPs and indels was successful.',
                 logger_error_mes=f'[GATK HaplotypeCaller] For some reason Calling germline SNPs and indels of {sample} '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK HaplotypeCaller failed ({sample}).'
@@ -500,7 +511,7 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[PICARD RenameSampleInVcf] Sample {sample} .gvcf sample naming was successfully.',
+                logger_mes=f'[PICARD RenameSampleInVcf] Sample {sample} .gvcf sample naming was successful.',
                 logger_error_mes=f'[PICARD RenameSampleInVcf] For some reason .gvcf sample naming of {sample} '
                                  f'was not successful.',
                 runtime_error_mes=f'PICARD RenameSampleInVcf failed ({sample}).'
@@ -520,7 +531,7 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK ValidateVariants] Sample {sample} validation was successfully.',
+                logger_mes=f'[GATK ValidateVariants] Sample {sample} validation was successful.',
                 logger_error_mes=f'[GATK ValidateVariants] For some reason validation of {sample} '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK ValidateVariants failed ({sample}).'
@@ -563,8 +574,8 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK CombineGVCFs] combining g.VCFs was successfully.',
-                logger_error_mes=f'[GATK CombineGVCFs] For some reason combining g.VCFs '
+                logger_mes=f'[GATK CombineGVCFs] combining g.VCFs was successful.',
+                logger_error_mes=f'[GATK CombineGVCFs] For some reason the combining of g.VCFs '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK CombineGVCFs failed.'
             )
@@ -583,7 +594,7 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK GenotypeGVCFs] Genotyping was successfully.',
+                logger_mes=f'[GATK GenotypeGVCFs] Genotyping was successful.',
                 logger_error_mes=f'[GATK GenotypeGVCFs] For some reason genotyping '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK GenotypeGVCFs failed.'
@@ -612,7 +623,7 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK SelectVariants] Sample {sample} Selecting a subset of variants was successfully.',
+                logger_mes=f'[GATK SelectVariants] Sample {sample} Selecting a subset of variants was successful.',
                 logger_error_mes=f'[GATK SelectVariants] For some reason Selecting a subset of variants of {sample} '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK SelectVariants failed ({sample}).'
@@ -648,8 +659,8 @@ class QtlTolls:
                 log=self.logger,
                 so_logger=self.st_logger,
                 report=result,
-                logger_mes=f'[GATK VariantsToTable] Sample {sample} table creation was successfully.',
-                logger_error_mes=f'[GATK VariantsToTable] For some reason table creation of {sample} '
+                logger_mes=f'[GATK VariantsToTable] Sample {sample} table creation was successful.',
+                logger_error_mes=f'[GATK VariantsToTable] For some reason the table creation of {sample} '
                                  f'was not successful.',
                 runtime_error_mes=f'GATK VariantsToTable failed ({sample}).'
             )

@@ -1,25 +1,9 @@
 """Functions used in tools script"""
 import time
 import os
-# import docker
 import json
 import logging
 import warnings
-# from docker.errors import NotFound
-
-
-# def interpret_result(log, so_logger, report, logger_mes, logger_error_mes, runtime_error_mes):
-#     """Interpret and report on return results of the process"""
-#     if report.exit_code == 0:
-#         log.info(logger_mes)
-#         write_result_to_debug(report, log=log)
-#         vr(report, log=so_logger)
-#     else:
-#         log.error(logger_error_mes)
-#         write_result_to_debug(report, log=log)
-#         vr(report, log=so_logger)
-#         raise RuntimeError(runtime_error_mes)
-#
 
 
 def enable_logging(log_name, log_file):
@@ -34,7 +18,11 @@ def enable_logging(log_name, log_file):
 
     handler = logging.FileHandler(log_file)
     handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('%(asctime)s\t%(levelname)s\t%(message)s'))
+    handler.setFormatter(
+        logging.Formatter(
+            '%(asctime)s\t%(levelname)s\t%(message)s'
+        )
+    )
     logger.addHandler(handler)
 
     logger.info(f'Analysis started on: {time.strftime("%c")}')
