@@ -8,6 +8,7 @@ QTLspyer/shiny/.Rhistory
 
 # Python
 QTLspyer/variant_calling/__pycache__/
+undo_log.py
 
 # Data
 QTLspyer/input/
@@ -15,3 +16,6 @@ QTLspyer/output/
 QTLspyer/*.bai
 QTLspyer/*.bam
 QTLspyer/*.table
+
+# vscode
+.vscode/

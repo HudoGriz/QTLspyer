@@ -688,7 +688,7 @@ shinyServer(function(input, output, session) {
 
     # Asign bulks
     HighBulk <- input$high_bulk
-    LowBulk <- input$high_bulk
+    LowBulk <- input$low_bulk
 
     # Import vcf tabels
     progress$inc(1 / n, detail = paste("Reading tabel")) # 1
