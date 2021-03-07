@@ -9,6 +9,7 @@ QTLspyer/shiny/.Rhistory
 # Python
 QTLspyer/variant_calling/__pycache__/
 undo_log.py
+clean.py
 
 # Data
 QTLspyer/input/

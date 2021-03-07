@@ -669,7 +669,7 @@ shinyServer(function(input, output, session) {
       return()
     }
 
-    if (input$high_bulk == input$high_bulk) {
+    if (input$high_bulk == input$low_bulk) {
       sendSweetAlert(
         session = session,
         title = "Error",
