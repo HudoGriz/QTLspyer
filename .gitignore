@@ -1,7 +1,17 @@
+# R
+QTLspyer/shiny/www/fastqc/
 QTLspyer/shiny/renv/
 QTLspyer/shiny/.Rproj.user/
 QTLspyer/shiny/shiny.Rproj
 QTLspyer/shiny/.RData
 QTLspyer/shiny/.Rhistory
 
+# Python
 QTLspyer/variant_calling/__pycache__/
+
+# Data
+QTLspyer/input/
+QTLspyer/output/
+QTLspyer/*.bai
+QTLspyer/*.bam
+QTLspyer/*.table

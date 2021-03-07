@@ -1,5 +1,31 @@
-Hello :)
-
-Place the right inputs, select the right parameters and press start process.
-
-Pro tip: you can run this proces gradualy by selecting which tools to run.
+2021-03-06 18:39:44,809	INFO	Analysis started on: Sat Mar  6 18:39:44 2021
+2021-03-06 18:39:44,810	INFO	Process initialized.
+2021-03-06 18:39:44,810	INFO	Populated samples from inputs: ['SRR6320320.fastq.gz', 'SRR6320321.fastq.gz'].
+2021-03-06 18:39:53,150	INFO	[BWA index] index created.
+2021-03-06 18:39:53,196	INFO	[Samtools faidx] indexing referencing done.
+2021-03-06 18:40:05,895	INFO	[GATK] Index creation with IndexFeatureFile for saccharomyces_cerevisiae.vcf.gz was successful.
+2021-03-06 18:40:05,895	INFO	read: SRR6320320.fastq.gz
+2021-03-06 18:52:39,974	INFO	[BWA] Sample SRR6320320 aligned successfully.
+2021-03-06 18:53:03,836	INFO	[Samtools index] Sample SRR6320320 indexing successfully.
+2021-03-06 18:58:43,538	INFO	[MD] Sample SRR6320320 Marking duplicates was successfully.
+2021-03-06 19:03:09,886	INFO	[RG] Sample SRR6320320 RG was successfully.
+2021-03-06 19:05:28,077	INFO	[GATK] Sample SRR6320320 Base model calibration was successful.
+2021-03-06 19:12:28,116	INFO	[GATK] Sample SRR6320320 quality score correction was successful.
+2021-03-06 19:28:15,127	INFO	[GATK HaplotypeCaller] Sample SRR6320320 Calling germline SNPs and indels was successful.
+2021-03-06 19:28:18,015	INFO	[PICARD RenameSampleInVcf] Sample SRR6320320 .gvcf sample naming was successful.
+2021-03-06 19:28:32,427	INFO	[GATK ValidateVariants] Sample SRR6320320 validation was successful.
+2021-03-06 19:28:32,428	INFO	read: SRR6320321.fastq.gz
+2021-03-06 19:47:37,740	INFO	[BWA] Sample SRR6320321 aligned successfully.
+2021-03-06 19:48:05,804	INFO	[Samtools index] Sample SRR6320321 indexing successfully.
+2021-03-06 19:54:18,631	INFO	[MD] Sample SRR6320321 Marking duplicates was successfully.
+2021-03-06 19:58:43,568	INFO	[RG] Sample SRR6320321 RG was successfully.
+2021-03-06 20:01:08,404	INFO	[GATK] Sample SRR6320321 Base model calibration was successful.
+2021-03-06 20:08:31,505	INFO	[GATK] Sample SRR6320321 quality score correction was successful.
+2021-03-06 20:23:37,227	INFO	[GATK HaplotypeCaller] Sample SRR6320321 Calling germline SNPs and indels was successful.
+2021-03-06 20:23:39,291	INFO	[PICARD RenameSampleInVcf] Sample SRR6320321 .gvcf sample naming was successful.
+2021-03-06 20:23:52,119	INFO	[GATK ValidateVariants] Sample SRR6320321 validation was successful.
+2021-03-06 20:24:11,878	INFO	[GATK CombineGVCFs] combining g.VCFs was successful.
+2021-03-06 20:24:33,161	INFO	[GATK GenotypeGVCFs] Genotyping was successful.
+2021-03-06 20:24:47,413	INFO	[GATK SelectVariants] Sample test_bp Selecting a subset of variants was successful.
+2021-03-06 20:25:00,845	INFO	[GATK VariantsToTable] Sample test_bp table creation was successful.
+2021-03-06 20:25:00,845	INFO	Finished!

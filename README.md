@@ -34,18 +34,19 @@ The installation can be mainly done in two ways. First is to Pull the image from
 
 ### Windows
 
-1. Install **Docker Desktop** for Windows.  
-2. Create a designated folder.  
-3. Copy inside the `Install_qtlspyer_for_windows10.bat`.  
-4. Run `Install_qtlspyer_for_windows10.bat`.
+1. Install [**Docker Desktop**](https://hub.docker.com/editions/community/docker-ce-desktop-windows) for Windows.  
+2. Create a designated folder _(recommended: Use lower cases for name and create it at C:)_.  
+3. Download `Run_qtlspyer_on_windows10.bat` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_windows10.bat)
+4. Place `Run_qtlspyer_on_windows10.bat` into the created folder.  
+5. Run `Run_qtlspyer_on_windows10.bat` as **Administrator**.
 
 ### Linux
 
-1. Install **Docker** for Linux.  
+1. Install [**Docker**](https://docs.docker.com/engine/install/ubuntu/) for Linux.  
 2. Create a designated folder.  
-3. Copy inside the `Install_qtlspyer_for_linux.sh`.   
-4. Make script executable with `chmod +x Install_qtlspyer_for_linux.sh`.  
-5. Run `Install_qtlspyer_for_linux.sh`.  
+3. Download `Run_qtlspyer_on_linux.sh` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_linux.sh).   
+4. Make script executable with `chmod +x Run_qtlspyer_on_linux.sh`.  
+5. Run `Run_qtlspyer_on_linux.sh`.  
 
 ### Advanced
 
