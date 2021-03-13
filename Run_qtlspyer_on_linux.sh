@@ -32,5 +32,5 @@ if command [ -x "$(command -v firefox)" ]; then
   exit 0
 fi
 
-echo "Can not locate a browser. Please direct your browser of choise manualy to localhost:3838."
+echo "Can not locate a browser. Please direct your browser of choice manually to localhost:3838."
 exit 0

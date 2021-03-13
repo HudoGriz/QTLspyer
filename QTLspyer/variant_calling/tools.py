@@ -413,7 +413,7 @@ class QtlTolls:
         return out
 
     def gatk_BaseRecalibrator(self, sample, bam, ref_fasta, exe, ref_vcf):
-        """Builds a model and then aplys it to get new quality scores"""
+        """Builds a model and then applies it to get new quality scores"""
         bqsr_recal_table = f"{sample}_recal_data.table"
         out = f"{sample}.bqsrCal.bam"
 
@@ -541,7 +541,7 @@ class QtlTolls:
 
     def gatk_merge_vcfs(self, exe, reference, sample):
         """Gather all created VCFs and combine them."""
-        out = f"{self.local_output}/GATK/VCFs/{sample}-genotyped_variants.vcf.gz"
+        out = f"{self.local_output}/GATK/VCFs/{sample}-genotype_variants.vcf.gz"
         out_merged = f"{self.local_output}/GATK/VCFs/{sample}-merged_variants.g.vcf.gz"
 
         if exe == 1:
@@ -631,7 +631,7 @@ class QtlTolls:
 
         return out
 
-    def gatk_varints_to_table(self, in1, sample, exe):
+    def gatk_variants_to_table(self, in1, sample, exe):
         """Transforms a .vcf file into a table"""
         out = f"{self.local_output}/GATK/tables/{sample}-raw.snps.table"
 

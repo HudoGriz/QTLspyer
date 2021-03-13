@@ -15,29 +15,31 @@ shinyServer(function(input, output, session) {
   )
 
   ref_fastas <- list.files(path = "../input/references/", pattern = "\\.fasta$")
-  ref_fastas_gz <- list.files(path = "../input/references/", pattern = "\\.fasta.gz$")
+  ref_fastas_gz <- list.files(
+    path = "../input/references/", pattern = "\\.fasta.gz$"
+  )
   ref_fastas <- c(ref_fastas, ref_fastas_gz)
   if (identical(ref_fastas, character(0))) {
     ref_fastas <- NA
   }
-  
+
   ref_vcf <- list.files(path = "../input/references/", pattern = "\\.vcf.gz$")
   ref_vcf_gz <- list.files(path = "../input/references/", pattern = "\\.vcf$")
   ref_vcf <- c(ref_vcf, ref_vcf_gz)
   if (identical(ref_vcf, character(0))) {
     ref_vcf <- NA
   }
-  
+
   adapters <- list.files(path = "../input/adapters/", pattern = "\\.fa")
   if (identical(adapters, character(0))) {
     adapters <- NA
   }
-  
+
   ref_gtf <- list.files(path = "../input/annotation/", pattern = "\\.gtf$")
   if (identical(ref_gtf, character(0))) {
     ref_gtf <- NA
   }
-  
+
   output$menu <- renderMenu({
     sidebarMenu(
       menuItem("Variant discovery",
@@ -65,7 +67,8 @@ shinyServer(function(input, output, session) {
         )
       ),
       menuItem("Info",
-        tabName = "help")
+        tabName = "help"
+      )
     )
   })
 
@@ -94,7 +97,11 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
           "marker",
-          "Use selected amount of _ delimited words for result file naming. Ex.: SRR_12_Saccharo when chosen 2 means SRR_12",
+          paste(
+            "Use selected amount of _ delimited words for result file naming.",
+            "Ex.: SRR_12_Saccharo when chosen 2 means SRR_12.",
+            "Chosen elements must be unique for each bulk."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
@@ -106,7 +113,10 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
           "pipe_script",
-          "Determins the sequence of tools to use for obtaining .vcf files. More info in help.",
+          paste(
+            "Determines the sequence of tools to use for obtaining .vcf files.",
+            "More info in help."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyCheckboxGroup(
@@ -114,38 +124,47 @@ shinyServer(function(input, output, session) {
           label = "Optional processes",
           choices = as.character(as.vector(optional_tools["name", ])),
           status = "primary",
-          fill = TRUE
+          fill = TRUE,
+          selected = as.character(as.vector(optional_tools["name", ]))
         ),
         bsTooltip(
           "optional_proc",
           paste(
-            "Selected tool will be included in the pipeline. Tool info can be found in help.",
-            "The file needs to contain organism name + fasta (Saccharomyces_cerevisiae.fasta)."
+            "Selected tool will be included in the pipeline.",
+            "Tool info can be found in help.",
+            "The file needs to contain organism name +",
+            "fasta (Saccharomyces_cerevisiae.fasta)."
           ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
           inputId = "ref_fasta",
-          label = "Refrence FASTA file",
+          label = "Reference FASTA file",
           choices = ref_fastas,
           status = "primary",
           fill = TRUE
         ),
         bsTooltip(
           "ref_fasta",
-          "It will be used as reference for input sequences. Same organism and strain is recommended.",
+          paste(
+            "It will be used as reference for input sequences.",
+            "Same organism and strain is recommended."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
           inputId = "ref_vcf",
-          label = "Refrence variants",
+          label = "Reference variants",
           choices = ref_vcf,
           status = "primary",
           fill = TRUE
         ),
         bsTooltip(
           "ref_vcf",
-          "Select file with referance vaiant calls. File needs to be inside refrences in inputs.",
+          paste(
+            "Select file with reference variant calls.",
+            "File needs to be inside references in inputs."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
@@ -157,7 +176,10 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
           "ref_gtf",
-          "Select file with the right annotation. compresed files wont be recognized in /annotation folder.",
+          paste(
+            "Select file with the right annotation.",
+            "Compressed files wont be recognized in /annotation folder."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
@@ -169,7 +191,10 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
           "adapters_file",
-          "Select the right adapter file to be used. The dapater file needs to be inside the dapters folder in inputs.",
+          paste(
+            "Select the right adapter file to be used.",
+            "The adapter file needs to be inside the adapter folder in inputs."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
@@ -223,19 +248,27 @@ shinyServer(function(input, output, session) {
   )
 
   observeEvent(input$pipe_script, {
-    choices <- piplines_elements[[input$pipe_script]]
+    choices <- pipelines_elements[[input$pipe_script]]
     choices <- as.character(as.vector(choices))
 
     output$pipe_elements <- renderUI({
       tagList(
         prettyCheckboxGroup(
-          inputId = "pipline_includes",
-          label = "Pipline includes",
+          inputId = "pipeline_includes",
+          label = "Pipeline should includes",
           choices = choices,
           selected = choices,
           status = "primary",
           fill = TRUE
-        )
+        ),
+        bsTooltip(
+            "pipeline_includes",
+            paste(
+              "Should primary be used for skipping tools after a failed run.",
+              "Tools still expect the output files from previous tools as input"
+            ),
+            placement = "left", trigger = "hover", options = NULL
+          )
       )
     })
   })
@@ -253,7 +286,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_cores",
-            "Some tools are able to take advantage of multithreading for greatly reduced processing time.",
+            paste(
+              "Some tools are able to take advantage of multithreading",
+              "for greatly reduced processing time."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           prettyRadioButtons(
@@ -266,7 +302,11 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_qtrim",
-            "Determine how BBduk will trim. You can set l for left or rl for both. W uses a moving window and f will disable trimming.",
+            paste(
+              "Determine how BBduk will trim.",
+              "You can set l for left or rl for both.",
+              "W uses a moving window and f will disable trimming."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -276,7 +316,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_trimq",
-            "This will quality-trim to Q20 using the Phred algorithm, which is more accurate than naive trimming.",
+            paste(
+              "This will quality-trim to Q20 using the Phred algorithm,",
+              "which is more accurate than naive trimming."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           prettyRadioButtons(
@@ -289,7 +332,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_ktrim",
-            "R is for right-trimming (3′ adapters), and L is for left-trimming (5′ adapters).",
+            paste(
+              "R is for right-trimming (3′ adapters),",
+              "and L is for left-trimming (5′ adapters)."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -299,7 +345,12 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_k",
-            "BBDuk supports kmers of length 1-31. The longer a kmer, the high the specificity. ote that it is impossible to do kmer matching for reference sequences that are shorter than K.",
+            paste(
+              "BBDuk supports kmers of length 1-31.",
+              "The longer a kmer, the high the specificity.",
+              "Note that it is impossible to do kmer matching for reference",
+              "sequences that are shorter than K."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -309,7 +360,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_mink",
-            "Will additionally look for shorter kmers with lengths then k.",
+            paste(
+              "Will additionally look for shorter kmers",
+              "with lengths less then k."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -319,7 +373,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_hdist",
-            "hdist means “hamming distance”. This allows one mismatch.",
+            paste(
+              "hdist means “hamming distance”.",
+              "Given number of mismatches will be tolerated."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -329,7 +386,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_ftm",
-            "Force trim the right end so that the read’s length is equal to zero modulo 5 (ftm=5).",
+            paste(
+              "Force trim the right end so that the reads length is equal to",
+              "zero modulo 5 (ftm=5)."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -339,7 +399,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "bbduk_minlen",
-            "This will discard reads shorter than set amount after quality trimming.",
+            paste(
+              "This will discard reads shorter than the set",
+              "amount after quality trimming."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           prettyRadioButtons(
@@ -364,7 +427,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "hc_ploidy",
-            "Ploidy (number of chromosomes) per sample. For pooled data, set to (Number of samples in each pool * Sample Ploidy).",
+            paste(
+              "Ploidy (number of chromosomes) per sample. For pooled data,",
+              "set to (Number of samples in each pool * Sample Ploidy)."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -374,7 +440,10 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "hc_conf",
-            "The minimum phred-scaled confidence threshold at which variants should be called.",
+            paste(
+              "The minimum phred-scaled confidence threshold",
+              "at which variants should be called."
+            ),
             placement = "left", trigger = "hover", options = NULL
           )
         )
@@ -384,31 +453,35 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  logData <- reactiveFileReader(1000, session = session, "../log/sample_processing.log", readLines)
+  log_data <- reactiveFileReader(
+    1000, session = session, "../log/sample_processing.log", readLines
+  )
   output$log <- renderText({
-    paste(logData(), collapse = "\n")
+    paste(log_data(), collapse = "\n")
   })
 
-  soLogData <- reactiveFileReader(1000, session = session, "../log/standard_output.log", readLines)
+  log_data_so <- reactiveFileReader(
+    1000, session = session, "../log/standard_output.log", readLines
+  )
   output$so_log <- renderText({
-    paste(soLogData(), collapse = "\n")
+    paste(log_data_so(), collapse = "\n")
   })
 
   observeEvent(input$run, {
     if (input$ex_name == "") {
       sendSweetAlert(
         session = session,
-        title = "Error",
+        title = "Oops",
         text = "The experiment name is missing!",
         type = "error"
       )
       return()
     }
-    
+
     selected <- optional_tools["name", ] %in% input$optional_proc
     optional_tools["value", selected] <- 1
 
-    pipeline_options <- make_command(input$pipline_includes)
+    pipeline_options <- make_command(input$pipeline_includes)
 
     if (input$advanced_tools) {
       options_bbduk <- BBduk(
@@ -448,7 +521,7 @@ shinyServer(function(input, output, session) {
     system(script_command, wait = FALSE)
 
     output$command <- renderText(script_command)
-    
+
     sendSweetAlert(
       session = session,
       title = "Success",
@@ -456,7 +529,7 @@ shinyServer(function(input, output, session) {
       type = "success"
     )
   })
-  
+
   ##########
   # FASTQC #
   ##########
@@ -495,17 +568,21 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(input$look_for_fastqc, {
-    fastqc_raw <- list.files(path = "../output/fastqc/untrimmed/", pattern = "\\.html$")
-    fastqc_tri <- list.files(path = "../output/fastqc/trimmed/", pattern = "\\.html$")
-    
+    fastqc_raw <- list.files(
+      path = "../output/fastqc/untrimmed/", pattern = "\\.html$"
+    )
+    fastqc_tri <- list.files(
+      path = "../output/fastqc/trimmed/", pattern = "\\.html$"
+    )
+
     for (fqc in fastqc_raw) {
       file.copy(
         paste0("../output/fastqc/untrimmed/", fqc),
         paste0("./www/fastqc/untrimmed"),
         overwrite = TRUE
-        )
+      )
     }
-    
+
     for (fqc in fastqc_tri) {
       file.copy(
         paste0("../output/fastqc/trimmed/", fqc),
@@ -513,21 +590,21 @@ shinyServer(function(input, output, session) {
         overwrite = TRUE
       )
     }
-    
+
     htmls_raw <- lapply(fastqc_raw, function(x) {
-        inputPanel(
-          width = 6,
-          a(x, href=paste0("/fastqc/untrimmed/", x), target="_blank")
-        )
-      })
-    
+      inputPanel(
+        width = 6,
+        a(x, href = paste0("/fastqc/untrimmed/", x), target = "_blank")
+      )
+    })
+
     htmls_trim <- lapply(fastqc_tri, function(x) {
       inputPanel(
         width = 6,
-        a(x, href=paste0("/fastqc/trimmed/", x), target="_blank")
+        a(x, href = paste0("/fastqc/trimmed/", x), target = "_blank")
       )
     })
-    
+
     output$tabs_untrimmed <- renderUI({
       tagList(
         hr(),
@@ -541,15 +618,14 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(input$clear_fastqc, {
-    # browser()
     path <- "www/fastqc"
     files <- list.files(pattern = "\\.html$", recursive = TRUE, path = path)
-    
+
     for (file in files) {
-       file.remove(paste(path, file, sep = "/"))
+      file.remove(paste(path, file, sep = "/"))
     }
 
-        output$tabs_untrimmed <- renderUI({
+    output$tabs_untrimmed <- renderUI({
       tagList(
         hr(),
         title = "Untrimmed",
@@ -601,13 +677,15 @@ shinyServer(function(input, output, session) {
   )
 
   observeEvent(input$table_refresh, {
-    files <- list.files(path = "../output/GATK/tables/", pattern = "\\.table$")
+    files <- list.files(
+      path = "../output/GATK/tables/", pattern = "\\.table$"
+    )
 
     if (is.null(input$ex_name)) {
-      curent_experiment <- NULL
+      current_experiment <- NULL
     } else {
       position <- grep(pattern = input$ex_name, x = files)
-      curent_experiment <- files[position]
+      current_experiment <- files[position]
     }
 
     updatePickerInput(
@@ -627,7 +705,7 @@ shinyServer(function(input, output, session) {
     )
 
     col.names <- colnames(col.names)
-    col.names <- col.names[-(1:4)]
+    col.names <- col.names[- (1:4)]
     bulks <- unique(gsub("\\..*", "", col.names))
 
     output$low_and_high <- renderUI(
@@ -662,7 +740,7 @@ shinyServer(function(input, output, session) {
     if (input$table_picked == "" || is.null(input$table_picked)) {
       sendSweetAlert(
         session = session,
-        title = "Error",
+        title = "Oops",
         text = "First select a file!",
         type = "error"
       )
@@ -672,32 +750,32 @@ shinyServer(function(input, output, session) {
     if (input$high_bulk == input$low_bulk) {
       sendSweetAlert(
         session = session,
-        title = "Error",
+        title = "Oops",
         text = "The bulks can't be the same!",
         type = "error"
       )
       return()
     }
 
-    # rpogres indicator
+    # Progress indicator
     progress <- shiny::Progress$new()
     on.exit(progress$close())
 
     progress$set(message = "Importing data", value = 0)
     n <- 5
 
-    # Asign bulks
-    HighBulk <- input$high_bulk
-    LowBulk <- input$low_bulk
+    # Assign bulks
+    high_bulk <- input$high_bulk
+    low_bulk <- input$low_bulk
 
-    # Import vcf tabels
-    progress$inc(1 / n, detail = paste("Reading tabel")) # 1
-    rawData <- paste0("../output/GATK/tables/", input$table_picked)
+    # Import vcf tables
+    progress$inc(1 / n, detail = paste("Reading table")) # 1
+    raw_data <- paste0("../output/GATK/tables/", input$table_picked)
 
     df <- importFromGATK(
-      file = rawData,
-      highBulk = HighBulk,
-      lowBulk = LowBulk
+      file = raw_data,
+      highBulk = high_bulk,
+      lowBulk = low_bulk
     )
 
     # Save to global
@@ -716,7 +794,7 @@ shinyServer(function(input, output, session) {
 
     p3 <- ggplot(data = df) +
       geom_histogram(aes(x = SNPindex.HIGH))
-    
+
     p4 <- ggplot(data = df) +
       geom_histogram(aes(x = SNPindex.LOW))
 
@@ -739,7 +817,8 @@ shinyServer(function(input, output, session) {
           paste(
             "This will filter out SNPs with a Reference Allele Frequency less",
             "than refAlleleFreq and greater than 1 - refAlleleFreq. Eg.",
-            "refAlleleFreq = 0.3 will keep SNPs with 0.3 <= REF_FRQ <= 0.7"),
+            "refAlleleFreq = 0.3 will keep SNPs with 0.3 <= REF_FRQ <= 0.7"
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         numericInput(
@@ -750,7 +829,8 @@ shinyServer(function(input, output, session) {
         bsTooltip(
           "minTotalDepth",
           paste(
-            "The minimum total read depth for a SNP (counting both bulks)"),
+            "The minimum total read depth for a SNP (counting both bulks)"
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         numericInput(
@@ -781,7 +861,8 @@ shinyServer(function(input, output, session) {
         bsTooltip(
           "depthDifference",
           paste(
-            "The maximum absolute difference in read depth between the bulks."),
+            "The maximum absolute difference in read depth between the bulks."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         numericInput(
@@ -791,9 +872,12 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
           "minGQ",
-          paste("The minimum Genotype Quality as set by GATK.",
-                "This is a measure of how confident GATK was with the",
-                "assigned genotype (i.e. homozygous ref, heterozygous, homozygous alt)."),
+          paste(
+            "The minimum Genotype Quality as set by GATK.",
+            "This is a measure of how confident GATK was with the",
+            "assigned genotype (i.e. homozygous ref, heterozygous,",
+            "homozygous alt)."
+          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         fluidRow(
@@ -850,7 +934,7 @@ shinyServer(function(input, output, session) {
 
     p3 <- ggplot(data = df) +
       geom_histogram(aes(x = SNPindex.HIGH))
-    
+
     p4 <- ggplot(data = df) +
       geom_histogram(aes(x = SNPindex.LOW))
 
@@ -897,8 +981,9 @@ shinyServer(function(input, output, session) {
               "The Gprime set is trimmed to exclude outlier regions",
               "(i.e. QTL) either based on Hampel rule or an alternate method",
               "for filtering out QTL using absolute delta SNP",
-              "indeces greater than a set threshold to filter out potential",
-              " QTL."),
+              "indices greater than a set threshold to filter out potential",
+              "QTL."
+            ),
             placement = "left", trigger = "hover", options = NULL
           )
         ),
@@ -912,8 +997,10 @@ shinyServer(function(input, output, session) {
           bsTooltip(
             "replications",
             paste(
-              "Difines the number of repeted simulations for each bulk.",
-              "More replications mean lower falls discovery rate, but longer processing."),
+              "Defines the number of repeated simulations for each bulk.",
+              "With the increase of replications the false discovery rate",
+              "drops lower but the processing time increases."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -928,7 +1015,7 @@ shinyServer(function(input, output, session) {
               "each SNP for which the minimum read",
               "depth and the tricube-smoothed depth is calculated.",
               "Size above 1000 recommended."
-              ),
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           prettyRadioButtons(
@@ -941,7 +1028,8 @@ shinyServer(function(input, output, session) {
           bsTooltip(
             "pop_structure",
             paste(
-              "The population structure. RIL - recombinant inbred line."),
+              "The population structure. RIL - recombinant inbred line."
+            ),
             placement = "left", trigger = "hover", options = NULL
           )
         ),
@@ -954,10 +1042,12 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "intervals",
-            paste("Confidence intervals supplied as two-sided",
-                  "percentiles. i.e. If intervals = 95",
-                  "will return the two sided 95% confidence interval,",
-                  "2.5% on each side."),
+            paste(
+              "Confidence intervals supplied as two-sided",
+              "percentiles. i.e. If intervals = 95",
+              "will return the two sided 95% confidence interval,",
+              "2.5% on each side."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           numericInput(
@@ -967,19 +1057,24 @@ shinyServer(function(input, output, session) {
           ),
           bsTooltip(
             "filter_threshold",
-            paste("Minimum SNP-index filter for removing outliers. Should be less than 0.5."),
+            paste(
+              "Minimum SNP-index filter for removing outliers.",
+              "Should be less than 0.5."
+            ),
             placement = "left", trigger = "hover", options = NULL
           ),
           prettyRadioButtons(
-            inputId = "dods_or_line",
+            inputId = "dots_or_line",
             label = "Plot style",
             choices = c("Line", "Points"),
             status = "primary",
             fill = TRUE
           ),
           bsTooltip(
-            "dods_or_line",
-            paste("WARNING: Ploting dots is significantly more resource intensive."),
+            "dots_or_line",
+            paste(
+              "WARNING: Plotting dots is significantly more resource intensive."
+            ),
             placement = "left", trigger = "hover", options = NULL
           )
         ),
@@ -993,7 +1088,10 @@ shinyServer(function(input, output, session) {
           ),
           uiOutput("genes")
         ),
-        tags$style(type='text/css', "#analyse {margin-top: 24px; margin-bottom: 12px;}")
+        tags$style(
+          type = "text/css",
+          "#analyse {margin-top: 24px; margin-bottom: 12px;}"
+        )
       ),
       uiOutput("results")
     )
@@ -1003,42 +1101,44 @@ shinyServer(function(input, output, session) {
     if (snp_table() == 0) {
       sendSweetAlert(
         session = session,
-        title = "Oups",
+        title = "Oops",
         text = "First you need to import the data.",
         type = "error"
       )
       return()
     }
-    
-    # Progres indication
+
+    # Progress indication
     progress <- shiny::Progress$new()
     on.exit(progress$close())
 
-    progress$set(message = "Analysing data", value = 0)
+    progress$set(message = "Analyzing data", value = 0)
     n <- 8
 
     # Get annotation
     progress$inc(1 / n, detail = paste("Obtaining annotation")) # 1
-    
-    tryCatch(
-      {
+
+    tryCatch({
         anno <- get_annotation(gtf_path = input$ref_gtf)
-    },
-    error = function(e){
-      sendSweetAlert(
-        session = session,
-        title = "Oups",
-        text = "Something is wrong with the annotation file.",
-        type = "error"
-      )
-    })
-    if (!exists("anno")) {return()}
-    
+      },
+      error = function(e) {
+        sendSweetAlert(
+          session = session,
+          title = "Oops",
+          text = "Something is wrong with the annotation file.",
+          type = "error"
+        )
+      }
+    )
+    if (!exists("anno")) {
+      return()
+    }
+
     # Update UI
     output$genes <- renderUI(
       selectInput(
         inputId = "gene", label = "Select genes",
-        choices = as.character(anno$genes), multiple = TRUE # , selectize = TRUE
+        choices = as.character(anno$genes), multiple = TRUE
       )
     )
 
@@ -1054,57 +1154,64 @@ shinyServer(function(input, output, session) {
 
     chrom_n <- length(unique(snps$CHROM))
     nam <- paste0("yaxis", c("", 2:chrom_n))
-    line <- input$dods_or_line == "Line"
+    line <- input$dots_or_line == "Line"
 
     # Analyse
-    progress$inc(1 / n, detail = paste("Runing window")) # 3
-    
-    tryCatch(
-      {qtl_o <- runQTLseqAnalysis(
-        snps,
-        windowSize = input$windowSize,
-        popStruc = input$pop_structure,
-        bulkSize = c(input$bulkSize_high, input$bulkSize_low),
-        replications = input$replications,
-        intervals = c(input$intervals),
-        maxk = 10000
-      )},
-      error = function(e){
+    progress$inc(1 / n, detail = paste("Running window")) # 3
+
+    tryCatch({
+        qtl_o <- runQTLseqAnalysis(
+          snps,
+          windowSize = input$windowSize,
+          popStruc = input$pop_structure,
+          bulkSize = c(input$bulkSize_high, input$bulkSize_low),
+          replications = input$replications,
+          intervals = c(input$intervals),
+          maxk = 10000
+        )
+      },
+      error = function(e) {
         sendSweetAlert(
           session = session,
-          title = "Oups",
-          text = "Something went wrong calculeting \u0394SNP index.\n
+          title = "Oops",
+          text = "Something went wrong calculating \u0394SNP index.\n
           Try changing settings or less restrictive filtering.",
           type = "error"
         )
-      })
-    if (!exists("qtl_o")) {return()}
-    
+      }
+    )
+    if (!exists("qtl_o")) {
+      return()
+    }
+
     progress$inc(1 / n, detail = paste("Calculating G")) # 4
-    tryCatch(
-      {Gprime <- runGprimeAnalysis(
-        qtl_o,
-        windowSize = input$windowSize,
-        outlierFilter = input$filter_method,
-        filterThreshold = as.numeric(input$filter_threshold),
-        maxk = 10000
-      )},
-      error = function(e){
+    tryCatch({
+        Gprime <- runGprimeAnalysis(
+          qtl_o,
+          windowSize = input$windowSize,
+          outlierFilter = input$filter_method,
+          filterThreshold = as.numeric(input$filter_threshold),
+          maxk = 10000
+        )
+      },
+      error = function(e) {
         sendSweetAlert(
           session = session,
-          title = "Oups",
+          title = "Oops",
           text = "Something went wrong calculating G statistics.\n
-          Try changing settings or less restrictive filtering.",
+        Try changing settings or less restrictive filtering.",
           type = "error"
         )
-      })
-    if (!exists("Gprime")) {return()}
-    browser()
-    
+      }
+    )
+
+    if (!exists("Gprime")) {
+      return()
+    }
+
     # Plot
     progress$inc(1 / n, detail = paste("Creating plots")) # 5
-    tryCatch(
-      {
+    tryCatch({
         p1 <- plot_nSNPs(SNPset = Gprime, line = line)
         p2 <- plot_deltaSNP(SNPset = Gprime, line = line)
         p3 <- plot_gprime(SNPset = Gprime, q = alpha, line = line)
@@ -1113,21 +1220,22 @@ shinyServer(function(input, output, session) {
           SNPset = Gprime, outlierFilter = input$filter_method, binwidth = 0.5,
           filterThreshold = as.numeric(input$filter_threshold)
         ) + theme_minimal()
-        
+
         p <- plot_raw_snps(data = Gprime)
         p_dif <- plot_raw_delta_snps(data = Gprime)
       },
-      error = function(e){
+      error = function(e) {
         sendSweetAlert(
           session = session,
-          title = "Oups",
-          text = "Something went wrong when ploting.\n
+          title = "Oops",
+          text = "Something went wrong when plotting.\n
           Try changing settings or less restrictive filtering.",
           type = "error"
         )
         return()
-      })
-    
+      }
+    )
+
     # Edit plotly
     progress$inc(1 / n, detail = paste("Editing plots")) # 6
     p <- edit_plotly(p = p, names = nam, hovermode = "x unified")
@@ -1153,7 +1261,6 @@ shinyServer(function(input, output, session) {
     outputOptions(output, "render_raw_n", suspendWhenHidden = FALSE)
     outputOptions(output, "render_raw_diff", suspendWhenHidden = FALSE)
     outputOptions(output, "render_pvalue", suspendWhenHidden = FALSE)
-    # outputOptions(output, "render_gdistribution", suspendWhenHidden = FALSE)
 
     # Generate table
     progress$inc(1 / n, detail = paste("Creating table")) # 8
@@ -1161,7 +1268,6 @@ shinyServer(function(input, output, session) {
     output$all_snips <- renderDataTable(
       Gprime,
       options = list(scrollX = TRUE)
-      # filter = 'top'
     )
 
     QTLseq_df <- getQTLTable(
@@ -1174,7 +1280,6 @@ shinyServer(function(input, output, session) {
     output$qtlseq_table <- renderDataTable(
       QTLseq_df,
       options = list(scrollX = TRUE)
-      # filter = 'top'
     )
 
     Gprime_df <- getQTLTable(
@@ -1187,7 +1292,6 @@ shinyServer(function(input, output, session) {
     output$gprime_table <- renderDataTable(
       Gprime_df,
       options = list(scrollX = TRUE)
-      # filter = 'top'
     )
 
 
@@ -1211,13 +1315,16 @@ shinyServer(function(input, output, session) {
           "Raw SNP index", plotlyOutput("render_raw_n", height = "1500px")
         ),
         tabPanel(
-          "Raw \u0394SNP index", plotlyOutput("render_raw_diff", height = "1500px")
+          "Raw \u0394SNP index",
+          plotlyOutput("render_raw_diff", height = "1500px")
         ),
         tabPanel(
-          "Processed SNP density ", plotlyOutput("render_proc_n", height = "1500px")
+          "Processed SNP density ",
+          plotlyOutput("render_proc_n", height = "1500px")
         ),
         tabPanel(
-          "Processed \u0394SNP density", plotlyOutput("render_proc_diff", height = "1500px")
+          "Processed \u0394SNP density",
+          plotlyOutput("render_proc_diff", height = "1500px")
         ),
         tabPanel(
           "P value", plotlyOutput("render_pvalue", height = "1500px")
@@ -1233,8 +1340,7 @@ shinyServer(function(input, output, session) {
   })
 
 
-  observeEvent(input$gene,
-    {
+  observeEvent(input$gene, {
       ## Mark selected genes
       # prepare
       old <- genes_selected()
@@ -1264,7 +1370,9 @@ shinyServer(function(input, output, session) {
         genes_selected(input$gene)
 
         new_gene <- tail(selected_gene, 1)
-        gene_position <- filter_annotation(selected_gene = new_gene, anno = anno)
+        gene_position <- filter_annotation(
+          selected_gene = new_gene, anno = anno
+        )
 
         for (p in plots) {
           mark_gene(
@@ -1301,7 +1409,7 @@ shinyServer(function(input, output, session) {
   # Data table #
   ##############
 
-  # SNP stas all
+  # SNP stats all
   output$snp_stat_tables <- renderUI(
     tagList(
       inputPanel(
@@ -1324,7 +1432,10 @@ shinyServer(function(input, output, session) {
       sprintf("snps_results_%s.txt", input$ex_name)
     },
     content = function(con) {
-      write.table(snp_table(), file = con, quote = FALSE, sep = "\t", row.names = FALSE)
+      write.table(
+        snp_table(),
+        file = con, quote = FALSE, sep = "\t", row.names = FALSE
+      )
     }
   )
 
@@ -1351,7 +1462,11 @@ shinyServer(function(input, output, session) {
       sprintf("snp_regions_results_%s.txt", input$ex_name)
     },
     content = function(con) {
-      write.table(qtl_tables()$QTLseq, file = con, quote = FALSE, sep = "\t", row.names = FALSE)
+      write.table(
+        qtl_tables()$QTLseq,
+        file = con, quote = FALSE,
+        sep = "\t", row.names = FALSE
+      )
     }
   )
 
@@ -1378,7 +1493,11 @@ shinyServer(function(input, output, session) {
       sprintf("qtl_results_%s.txt", input$ex_name)
     },
     content = function(con) {
-      write.table(qtl_tables()$Gprime, file = con, quote = FALSE, sep = "\t", row.names = FALSE)
+      write.table(
+        qtl_tables()$Gprime,
+        file = con, quote = FALSE,
+        sep = "\t", row.names = FALSE
+      )
     }
   )
 })

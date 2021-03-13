@@ -1,4 +1,4 @@
-<p align="center"><img src="QTLspyer/shiny/www/logo.png" width="200" alt="QTLspyer logo"></p>
+ <p align="center"><img src="QTLspyer/shiny/www/logo.png" width="200" alt="QTLspyer logo"></p>
 
 ## Table of contents
 
@@ -21,7 +21,7 @@
 
 ## About
 
-This application was created as my master thesis project. Its goal is to make a **QTL bulk** analysis using NGS data faster, repeatable and easier for the user. This is achieved by using a `python` script which connects **GATK** tools into a customizable pipeline. A `R Shiny` app allows for easy pipeline customization, data filtration and result visualization. To spare the users from all the installation steps of tools and dependencies the whole project is available in form of a Docker image. To simplify the installation process scripts for installing on **Windows 10** and **Linux** have been provided. All that the user is requeued to manually instal is a **Docker** version compatible with his os.  
+This application was created as my master thesis project. Its goal is to make a **QTL bulk** analysis using NGS data faster, repeatable and easier for the user. This is achieved by using a `python` script which connects **GATK** tools into a customizable pipeline. A `R Shiny` app allows for easy pipeline customization, data filtration and result visualization. To spare the users from all the installation steps of tools and dependencies the whole project is available in form of a Docker image. To simplify the installation process scripts for installing on **Windows 10** and **Linux** have been provided. All that the user is required to manually install is a **Docker** version compatible with his os.  
 * Project status: **prototype**
 
 Docker image:
@@ -30,7 +30,7 @@ Docker image:
 
 ## Installation
 
-The installation can be mainly done in two ways. First is to Pull the image from _Docker Hub_ and run the right installation script. The second way is to copy this repository to local and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .` in the same directory as the `Dockerfile`. I commend the first one as it is easier. Bouth steps requer a pre-installed **Docker**.
+The installation can be mainly done in two ways. First is save the right installation script inside a designated folder and run it. The second way is to copy this repository to a local computer and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .` in the same directory as the `Dockerfile`. I recommend the first one as it is easier. Both steps require a pre-installed **Docker**.
 
 ### Windows
 
@@ -58,7 +58,7 @@ The installation can be mainly done in two ways. First is to Pull the image from
 
 ## Usage
 
-The main use of the app is to run the **GATK** - _Germline short variant discovery_ pipeline using a _GUI_. Further functionalities allow for viewing **fastQC** reports, variant data filtration and visualization. Interactive data filtration is achieved by four histograms visualizing the cumulative data distribution changes. The **QTL**s are calculations are based on [QTLseqr](https://github.com/bmansfeld/QTLseqr) a `library` for **R**. Two prime methods are used for **QTL** estimation: [QTL-seq method](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.12105) and [G prime method](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002255). The data is visualized with interactive plots depicting variable vs. genome position. The addition of a `.gvc` enables the plotting of genes. Data tables containing statistic about individual **SNP**s and **QTL**s can be viewed and downloaded. In detail information about the process and users recommended action can also be found inside the **Shiny** app.
+The main use of the app is to run the **GATK** - _Germline short variant discovery_ pipeline using a _GUI_. Further functionalities allow for viewing of **fastQC** reports, variant data filtration and visualization. Interactive data filtration is achieved by four histograms visualizing the cumulative data distribution changes. The **QTL**s estimations are based on [QTLseqr](https://github.com/bmansfeld/QTLseqr) a `library` for **R**. Two prime methods are used for **QTL** estimation: [QTL-seq method](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.12105) and [G prime method](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002255). The data is visualized with interactive plots depicting variables vs. genome position. The addition of a `.gvc` enables the plotting of gene locations. Data tables containing statistics about individual **SNP**s and **QTL**s can be viewed and downloaded. In detail information about the process and users recommended action can also be found inside the **Shiny** app.
 
 ### Screenshots
 
@@ -92,7 +92,7 @@ The main use of the app is to run the **GATK** - _Germline short variant discove
 
 ### Content
 
-The code is organized into two parts. the fist part is in `python`. A `class` object is created which methods call the required tool and evaluate the output. This methods are used to code a pipeline in a executable python script. The shiny app is used to create the appropriate command line for the python scripts. Active watchers observe changes in the log files and report back on the pipeline progress.
+The code is organized into two parts. The first part is in `python`. A `class` object is created which methods call the required tool and evaluate the output. These methods are used to code a pipeline which is saved as an executable python script. The shiny app is used to create the appropriate command line for running the executable script. Active watchers observe changes in the log files and report back on the pipeline progression.
 
 ### Folder structure
 
@@ -109,14 +109,14 @@ The code is organized into two parts. the fist part is in `python`. A `class` ob
         ├── aligned                     # Sequence alignment files location (.bam)
         ├── fastqc                      # FastQC Quality reports location (.html & .zip)
         ├── trimmed                     # Trimmed read sequences location (.fasqc)
-        └── GATK                        # GATK tools for variant caling output location
+        └── GATK                        # GATK tools for variant calling output location
             ├── VCFs                    # Germline Variant called files and their indexes (.vcf & .tbi)
             ├── nonfiltered             # SNPs selected out of variants and their indexes (.vcf & .idx)
             └── tables                  # VCF files transformed to tables (.snps.table)
 
 ### Requirements and limitations
 
-The variant calling pipeline is recurse intensive. The recommended spec are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmark processes with 1-3 GB `.fastq` samples took 2-4 hours on 32GB of RAM and 8 core processor. Samples between 5-10 GB can reach up to 15 hours.
+The variant calling pipeline is recurse intensive. The recommended specs are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmark processes with 1-3 GB `.fastq` samples took 2-4 hours on 32GB of RAM and 8 core processor. Samples between 5-10 GB can reach up to 15 hours. Make sure to have enough space on the hard drive. For every GB of input data we can expect on average 7 GB of output information.
  
 
 ## Resources
@@ -193,7 +193,7 @@ Docker:
 Thanks:
 > Special thanks to [Genialis](https://www.genialis.com/) for [resolwebio/rnaseq](https://hub.docker.com/r/resolwebio/rnaseq) and cooperation in this project.  
 > To my mentors [Assist. Prof. Dr. Cene Gostinčar](https://scholar.google.com/citations?user=D82dKecAAAAJ&hl=en) and [Dr. Janez Kokosar](https://github.com/jkokosar).  
-> To [Dr. Roman Luštrik](https://github.com/romunov) for helping with technical maters.  
+> To [Dr. Roman Luštrik](https://github.com/romunov) for his help with technical matters.  
 > (TODO)
 
 ## License

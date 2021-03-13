@@ -1,14 +1,14 @@
-This pipeline can be run from teh first tab **Variant discovery**.
-The page consists of a input box to the left and two output boxes to the right.
+This pipeline can be run from the first tab **Variant discovery**.
+The page consists of an input box to the left and two output boxes to the right.
 In the input boxes you have to provide an experiment name which is later used for
 file naming of the results. Marker selection should be set accordingly to input sample name.
 The reference **FASTA** file appears automatically after inserting the `.fasta` file into the folder `references`.
-Advanced options can be toggled on or off for further user tailoring of the pipeline.
+Advanced options can be toggled on or off for further tailoring of the pipeline.
 The steps in **pipeline includes** should be exclusively used for skipping steps
 when running a failed pipeline again. The process will fail if a tool can not find output files from a previous step.
 
-The command line for running the pipeline will be printed on top the progress report.
-In the progress report window each tool will past its time status when finished.
+The command line for running the pipeline will be printed on top of the progress report.
+In the progress report window each tool will paste its time status when finished.
 The standard output of each tool can be observed in the **Standard output** box.
 
 
@@ -55,7 +55,7 @@ minlen={minlen} threads={n_cores}
 
 #### Burrows-Wheeler Aligner (BWA)
 
-**BWA-MEM** is used to align sample sequences to reference genome. Sepret variants are performed if sequences
+**BWA-MEM** is used to align sample sequences to the reference genome. Separate variants are performed if sequences
 are _single-end_ or _pair-end_. For more details reference [man pages](http://bio-bwa.sourceforge.net/bwa.shtml).
 
 Single-end:  
@@ -89,7 +89,7 @@ Further information can be found
 `java -jar {self.gatk} BaseRecalibrator -R {ref_fasta} -I {bam} --use-original-qualities -known-sites {ref_vcf} -O {bqsr_recal_table}`
 
 In the second step GATKs **ApplyBQSR** is used to recalibrate the base qualities of the input reads based
- on the recalibration table produced by the BaseRecalibrator tool, and output a recelebrated BAM file.
+ on the recalibration table produced by the BaseRecalibrator tool, and output a recalibrated BAM file.
  Further information can be found
 [here](https://gatk.broadinstitute.org/hc/en-us/articles/360037055712-ApplyBQSR).
 

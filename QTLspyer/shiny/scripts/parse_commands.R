@@ -2,27 +2,20 @@
 
 make_command <- function(steps) {
   if (is.null(steps)) {
-    
     return(NULL)
-    
   } else {
-    
     steps <- gsub(" ", "", steps)
     steps <- paste0("--", steps, " 1")
     paste(steps, collapse = " ")
-    
   }
 }
 
 BBduk <- function(
   n_cores, ktrim, qtrim, trimq, k, mink, hdist, ftm, chastityfilter, minlen
-) {
+  ) {
   if (is.null(n_cores)) {
-    
     return(NULL)
-  
   } else {
-    
     paste0(
       "--Bbduk_n_cores ", n_cores,
       " --Bbduk_ktrim ", ktrim,
@@ -35,23 +28,17 @@ BBduk <- function(
       " --Bbduk_chastityfilter ", chastityfilter,
       " --Bbduk_minlen ", minlen
     )
-    
   }
 }
 
 HaplotypeCaller <- function(
-  ploidy, conf
-) {
+                            ploidy, conf) {
   if (is.null(ploidy)) {
-    
     return(NULL)
-    
   } else {
-    
     paste0(
       "--HaplotypeCaller_ploidy ", ploidy,
       " --HaplotypeCaller_confidence ", conf
     )
-    
   }
 }

@@ -58,7 +58,7 @@ parser.add_argument('--VariantsToTable', '-vtt', help='Pipeline to include .vcf 
 parser.add_argument('--Bbduk_n_cores', '-BB_cor',
                     help='Cores BBduk.sh should use when trimming.', default=8, type=int)
 parser.add_argument('--Bbduk_ktrim', '-BB_kt',
-                    help="Trim reads to remove bases matching reference kmers. Values: f (don't trim), "
+                    help="Trim reads to remove bases matching reference k-mers. Values: f (don't trim), "
                          "r (trim to the right), l (trim to the left).",
                     default='r', type=str)
 parser.add_argument('--Bbduk_qtrim', '-BB_qt', help='Trim read ends to remove bases with quality below trimq.',
@@ -66,14 +66,14 @@ parser.add_argument('--Bbduk_qtrim', '-BB_qt', help='Trim read ends to remove ba
 parser.add_argument('--Bbduk_trimq', '-BB_tq', help='Regions with average quality BELOW this will be trimmed.',
                     default=20, type=int)
 parser.add_argument('--Bbduk_k', '-BB_k',
-                    help='Kmer length used for finding contaminants. Contaminants shorter than k will not be found. '
+                    help='K-mer length used for finding contaminants. Contaminants shorter than k will not be found. '
                          'k must be at least 1.',
                     default=23, type=int)
 parser.add_argument('--Bbduk_mink', '-BB_mk',
-                    help='Look for shorter kmers at read tips down to this length, when k-trimming or masking.',
+                    help='Look for shorter k-mers at read tips down to this length, when k-trimming or masking.',
                     default=11, type=int)
 parser.add_argument('--Bbduk_hdist', '-BB_hd',
-                    help='Maximum Hamming distance for ref kmers (subs only). Memory use is proportional to '
+                    help='Maximum Hamming distance for ref k-mers (subs only). Memory use is proportional to '
                          '(3*K)^hdist.',
                     default=1, type=int)
 parser.add_argument('--Bbduk_ftm', '-BB_ftm',
@@ -102,8 +102,8 @@ args = parser.parse_args()
 marker = args.markerPosition
 fasta_ref = args.Reference
 ref_org = args.ReferenceName
-do_fastq_pretrimm = args.runFastqcPreTrim
-do_fastq_trimm = args.runFastqcPostTrim
+do_fastq_pretrim = args.runFastqcPreTrim
+do_fastq_trim = args.runFastqcPostTrim
 
 fasta_ref_file = f'input/references/{fasta_ref}'
 vcf_ref_file = f'input/references/{args.ReferenceVCF}'
@@ -124,7 +124,7 @@ for sample in qtl.ori_samples:
 
         qtl.logger.info(f'read: {r}')
 
-        if do_fastq_pretrimm == 1:
+        if do_fastq_pretrim == 1:
             qtl.fastqc_single(status='untrimmed', sample=sample,
                               in1=f'{qtl.local_input}/{r}')
 
@@ -138,7 +138,7 @@ for sample in qtl.ori_samples:
         else:
             trimmed = f'{qtl.local_input}/{r}'
 
-        if do_fastq_trimm == 1:
+        if do_fastq_trim == 1:
             qtl.fastqc_single(status='trimmed', sample=sample, in1=trimmed)
 
         mapped = qtl.bwa_single(
@@ -154,10 +154,10 @@ for sample in qtl.ori_samples:
 
         qtl.logger.info(f'read1: {r1}, read2: {r2}')
 
-        if do_fastq_pretrimm == 1:
+        if do_fastq_pretrim == 1:
             qtl.fastqc(
                 status='untrimmed', sample=sample,
-                       in1=f'{qtl.local_input}/{r1}', in2=f'{qtl.local_input}/{r1}'
+                       in1=f'{qtl.local_input}/{r1}', in2=f'{qtl.local_input}/{r2}'
             )
 
         if args.runBBduk == 1:
@@ -171,7 +171,7 @@ for sample in qtl.ori_samples:
         else:
             trimmed = [f'{qtl.local_input}/{r1}', f'{qtl.local_input}/{r2}']
 
-        if do_fastq_trimm == 1:
+        if do_fastq_trim == 1:
             qtl.fastqc(
                 status='trimmed', sample=sample,
                 in1=trimmed[0], in2=trimmed[1]
@@ -212,7 +212,7 @@ filtered_variants = qtl.gatk_variant_selection(
     parameters='SNP', exe=args.FilteringOutSNPs
 )
 
-variant_table = qtl.gatk_varints_to_table(
+variant_table = qtl.gatk_variants_to_table(
     sample=args.experimentName, in1=filtered_variants, exe=args.VariantsToTable
 )
 

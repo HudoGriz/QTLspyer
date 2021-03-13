@@ -1,4 +1,4 @@
-All that that the user needs to provide is considered as input data and can be found under `QTLspyer\input`.
+All data that the user needs to provide is considered as input data and can be found under `QTLspyer\input`.
 
 #### Sample sequence data
 

@@ -26,14 +26,16 @@ optional_tools <- data.frame(
 )
 row.names(optional_tools) <- c("name", "value")
 
-pipeline_scripts <- list.files(path = "../variant_calling/", pattern = "\\_script.py$")
+pipeline_scripts <- list.files(
+  path = "../variant_calling/", pattern = "\\_script.py$"
+  )
 
-piplines_elements <- list(
+pipelines_elements <- list(
   "cene_variant_calling_script.py" = c(
     "Trimming", "Mapping", "Read Groups Processing",
     "Marking Duplicates", "Variant Calling", "Combine GVCFs",
     "Filtering Out SNPs", "Quality Filtering VCF", "Variants To Table"
-    ),
+  ),
   "best_practice_germline_variant_discovery_script.py" = c(
     "Trimming", "Mapping", "Marking Duplicates", "Read Groups Processing",
     "Base Recalibration", "Variant Calling", "Combine GVCFs",

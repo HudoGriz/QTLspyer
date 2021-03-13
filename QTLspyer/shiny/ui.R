@@ -5,14 +5,16 @@ dashboardPage(
   dashboardSidebar(sidebarMenuOutput("menu")),
   dashboardBody(
     tags$head(
-    tags$style(
-    HTML(".logo {
+      tags$style(
+        HTML(".logo {
           background-color: #6aa3d5 !important;
           }
           .navbar {
           background-color: #428BCA !important;
           }
-          "))),
+          ")
+      )
+    ),
     tabItems(
       tabItem(
         tabName = "settings",
@@ -52,13 +54,13 @@ dashboardPage(
               title = "Introduction",
               collapsible = TRUE,
               includeMarkdown("markdown/introduction.md")
-              ),
+            ),
             box(
               width = 12,
               title = "User guide",
               collapsible = TRUE,
               includeMarkdown("markdown/user_guide.md")
-              ),
+            ),
             box(
               width = 12,
               title = "Input data",
