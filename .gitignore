@@ -20,3 +20,6 @@ QTLspyer/*.table
 
 # vscode
 .vscode/
+
+# Storage
+storage/

@@ -1160,8 +1160,8 @@ shinyServer(function(input, output, session) {
     progress$inc(1 / n, detail = paste("Running window")) # 3
 
     tryCatch({
-        qtl_o <- runQTLseqAnalysis(
-          snps,
+        qtl_o <- QTLseqr::runQTLseqAnalysis(
+          SNPset = snps,
           windowSize = input$windowSize,
           popStruc = input$pop_structure,
           bulkSize = c(input$bulkSize_high, input$bulkSize_low),
@@ -1186,8 +1186,8 @@ shinyServer(function(input, output, session) {
 
     progress$inc(1 / n, detail = paste("Calculating G")) # 4
     tryCatch({
-        Gprime <- runGprimeAnalysis(
-          qtl_o,
+        Gprime <- QTLseqr::runGprimeAnalysis(
+          SNPset = qtl_o,
           windowSize = input$windowSize,
           outlierFilter = input$filter_method,
           filterThreshold = as.numeric(input$filter_threshold),
