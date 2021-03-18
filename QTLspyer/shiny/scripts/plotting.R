@@ -66,7 +66,7 @@ plot_pvalue <- function(SNPset, line, q) {
   var <- "negLog10Pval"
 
   treshold <- get_treshold(SNPset, q = q)
-  p <- plot_base(SNPset, lab = expression("-" * log[10] * "(p-value)"), var = var)
+  p <- plot_base(SNPset, lab = "p-value", var = var)
   p <- plot_data(p, line = line, var = var)
   p <- plot_treshold(p, plot = treshold$plot, treshold = treshold$f)
   p <- plot_style(p)
