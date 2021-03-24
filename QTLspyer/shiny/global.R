@@ -15,6 +15,10 @@ library(shinyBS)
 library(markdown)
 library(rtracklayer)
 
+library(promises)
+library(future)
+plan(multisession)
+
 files.sources <- list.files("scripts", full.names = TRUE)
 sapply(files.sources, source)
 
@@ -29,6 +33,9 @@ row.names(optional_tools) <- c("name", "value")
 pipeline_scripts <- list.files(
   path = "../variant_calling/", pattern = "\\_script.py$"
   )
+names(pipeline_scripts) <- c(
+  "GATK best practice (Pipeline with BQSR)",
+  "Light weight (Pipeline without BQSR)")
 
 pipelines_elements <- list(
   "cene_variant_calling_script.py" = c(
@@ -42,3 +49,5 @@ pipelines_elements <- list(
     "Filtering Out SNPs", "Variants To Table"
   )
 )
+
+primal_processes <- get.processes()

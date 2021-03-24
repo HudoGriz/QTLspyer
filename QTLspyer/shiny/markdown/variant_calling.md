@@ -1,25 +1,32 @@
 This pipeline can be run from the first tab **Variant discovery**.
 The page consists of an input box to the left and two output boxes to the right.
-In the input boxes you have to provide an experiment name which is later used for
-file naming of the results. Marker selection should be set accordingly to input sample name.
-The reference **FASTA** file appears automatically after inserting the `.fasta` file into the folder `references`.
-Advanced options can be toggled on or off for further tailoring of the pipeline.
-The steps in **pipeline includes** should be exclusively used for skipping steps
-when running a failed pipeline again. The process will fail if a tool can not find output files from a previous step.
 
-The command line for running the pipeline will be printed on top of the progress report.
-In the progress report window each tool will paste its time status when finished.
-The standard output of each tool can be observed in the **Standard output** box.
+### Input
 
+An experiment name needs to be provided which is used for unique file name generation of output files.  
 
-Both pipelines follow the **GATK best practice** instruction for germline short variant discovery.
-The only difference is in the inclusion of base recalibration.
+There are two workflows available. Both pipelines follow the **GATK best practice** instruction for germline short variant discovery. The main difference is in the inclusion of **base quality score recalibration** (GQSR). The other minor difference is in the calling order for **duplicates marking** and **read group processing**. The GATK best practice pipeline is more resource intensive and requires longer to complete. Results from both pipelines do not significantly differ.
 
 <img src="../www/germline_best_practice.png" width="700">
 
 _Visual representation of the pipeline. The tools named on pages are used on each sample individually._
 _Tools named outside are used on samples combined._
 (Source: [GATK](https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-))
+
+The **optional process**are the ones that can be skipped or included in a pipeline. Note that this is not the same as **Pipeline steps**. If the optional steps are unmarked the pipeline will skip this step by providing the given tools inputs to the next tool. For example skipping the trimming can be achieved by unmarking it from the optional process but leaving it market in processes steps. If we were to unmark it in the processes steps the pipeline would understand it as that the trimming has already been done but we wish to skip it in this run. So the next tool will search for the trimmed sequences.
+
+The **reference** files appear automatically after insertion in the folder. At most a page refresh is required.
+
+**Advanced options** can be toggled on or off for further customization of the pipeline. For in detail description of parameters and tools functionalities please refer to the referral links provided for each tool below.
+
+The steps in **pipeline includes** should be exclusively used for skipping when running a failed pipeline again. The process will fail if a tool can not locate its input file.
+
+### Output boxes
+
+In the **progress report** the time and the information about the outcome of each tool will be printed. Therefore the prime purpose of this display is the tracking of pipeline steps.
+
+The standard output of each tool will be printed inside the **Standard output** box. Therefore the prime purpose of this display is in detail tracking of tools or debugging a failed status observed in the progress report.
+
 
 ### Tools
 

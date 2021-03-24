@@ -42,6 +42,9 @@ shinyServer(function(input, output, session) {
 
   output$menu <- renderMenu({
     sidebarMenu(
+      menuItem("Info",
+        tabName = "help"
+      ),
       menuItem("Variant discovery",
         tabName = "settings"
       ),
@@ -65,9 +68,6 @@ shinyServer(function(input, output, session) {
         menuSubItem("QTL - Q statistics",
           tabName = "qtl_q"
         )
-      ),
-      menuItem("Info",
-        tabName = "help"
       )
     )
   })
@@ -86,24 +86,6 @@ shinyServer(function(input, output, session) {
           "Name to be included in final .vcf and .table file name.",
           placement = "left", trigger = "hover", options = NULL
         ),
-        numericInput(
-          "marker",
-          "Select number of elements to use as marker",
-          1,
-          min = 1,
-          max = 20,
-          step = 1,
-          width = NA
-        ),
-        bsTooltip(
-          "marker",
-          paste(
-            "Use selected amount of _ delimited words for result file naming.",
-            "Ex.: SRR_12_Saccharo when chosen 2 means SRR_12.",
-            "Chosen elements must be unique for each bulk."
-          ),
-          placement = "left", trigger = "hover", options = NULL
-        ),
         prettyRadioButtons(
           inputId = "pipe_script",
           label = "Workflow",
@@ -115,7 +97,7 @@ shinyServer(function(input, output, session) {
           "pipe_script",
           paste(
             "Determines the sequence of tools to use for obtaining .vcf files.",
-            "More info in help."
+            "More in info."
           ),
           placement = "left", trigger = "hover", options = NULL
         ),
@@ -131,7 +113,7 @@ shinyServer(function(input, output, session) {
           "optional_proc",
           paste(
             "Selected tool will be included in the pipeline.",
-            "Tool info can be found in help.",
+            "More about the tool can be found in info.",
             "The file needs to contain organism name +",
             "fasta (Saccharomyces_cerevisiae.fasta)."
           ),
@@ -216,13 +198,7 @@ shinyServer(function(input, output, session) {
           status = "primary",
           fill = TRUE
         ),
-        actionBttn(
-          inputId = "run",
-          label = "Start process",
-          style = "material-flat",
-          color = "primary",
-          size = "lg"
-        ),
+        uiOutput("control_button"),
         hr(),
         uiOutput("pipe_elements"),
         uiOutput("advanced_tools_settings")
@@ -255,7 +231,7 @@ shinyServer(function(input, output, session) {
       tagList(
         prettyCheckboxGroup(
           inputId = "pipeline_includes",
-          label = "Pipeline should includes",
+          label = "Pipeline steps",
           choices = choices,
           selected = choices,
           status = "primary",
@@ -453,6 +429,33 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  observeEvent(log_data(), {
+    now_running <- get.processes()
+
+    if ("python3" %in% now_running$CMD) {
+      output$control_button <- renderUI({
+        actionBttn(
+            inputId = "stop",
+            label = "Stop process",
+            style = "material-flat",
+            color = "danger",
+            size = "lg"
+          )
+      })
+    }
+    else {
+      output$control_button <- renderUI({
+        actionBttn(
+              inputId = "run",
+              label = "Start process",
+              style = "material-flat",
+              color = "primary",
+              size = "lg"
+            )
+      })
+    }
+  })
+
   log_data <- reactiveFileReader(
     1000, session = session, "../log/sample_processing.log", readLines
   )
@@ -504,7 +507,6 @@ shinyServer(function(input, output, session) {
 
     script_command <- paste0(
       "../variant_calling/", input$pipe_script,
-      " --markerPosition ", input$marker,
       " --experimentName ", input$ex_name,
       " --Reference ", input$ref_fasta,
       " --Adapters ", input$adapters_file,
@@ -518,9 +520,11 @@ shinyServer(function(input, output, session) {
       " ", advanced_tool_options
     )
 
-    system(script_command, wait = FALSE)
+    future({
+      system(script_command, wait = TRUE)
+    })
 
-    output$command <- renderText(script_command)
+    # output$command <- renderText(script_command)
 
     sendSweetAlert(
       session = session,
@@ -528,6 +532,36 @@ shinyServer(function(input, output, session) {
       text = "Pipeline successfully started!",
       type = "success"
     )
+  })
+
+  observeEvent(input$stop, {
+    confirmSweetAlert(
+      session,
+      "stop_confirmation",
+      title = "Stopping the process",
+      text = "Are you sure you wish to stop the process?",
+      type = "warning",
+      btn_labels = c("No", "Yes"),
+      btn_colors = NULL,
+    )
+  })
+
+  observeEvent(input$stop_confirmation, {
+    now_running <- get.processes()
+
+    running <- paste(now_running$PID, now_running$CMD, sep = " ")
+    primal <- paste(primal_processes$PID, primal_processes$CMD, sep = " ")
+
+    new <- now_running[!running %in% primal, ]
+    new <- new[!new$CMD == "R", ]
+    new <- new[!new$CMD == "sh", ]
+    new <- new[!new$CMD == "ps", ]
+
+    for (pid in new$PID) {
+       system(paste("kill -9", as.numeric(pid)))
+    }
+
+    system("../variant_calling/force_report.py")
   })
 
   ##########
@@ -712,7 +746,7 @@ shinyServer(function(input, output, session) {
       tagList(
         pickerInput(
           inputId = "low_bulk",
-          label = "Low bulk",
+          label = "Low bulk (pool 1)",
           choices = bulks,
           selected = bulks[1]
         ),
@@ -723,7 +757,7 @@ shinyServer(function(input, output, session) {
         ),
         pickerInput(
           inputId = "high_bulk",
-          label = "High bulk",
+          label = "High bulk (pool 2)",
           choices = bulks,
           selected = bulks[2]
         ),
@@ -960,12 +994,12 @@ shinyServer(function(input, output, session) {
           width = 10,
           numericInput(
             "bulkSize_high",
-            label = "Bulk size (high)",
+            label = "High bulk (pool) size",
             value = 25
           ),
           numericInput(
             "bulkSize_low",
-            label = "Bulk size (low)",
+            label = "Low bulk (pool) size",
             value = 35
           ),
           prettyRadioButtons(

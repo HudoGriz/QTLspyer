@@ -19,7 +19,7 @@ class QtlTolls:
         self.home = os.getcwd()
 
         self.logger = enable_logging(
-            log_name='process_logger', log_file='log/sample_processing.log')
+            log_name='process_logger', log_file='/QTLspyer/log/sample_processing.log')
         self.st_logger = enable_logging(
             log_name='standard_output_logger', log_file='log/standard_output.log')
 
@@ -32,10 +32,10 @@ class QtlTolls:
 
         self.logger.info(f"Process initialized.")
 
-    def populate_samples(self, marker_position, single_reads="FALSE"):
+    def populate_samples(self, single_reads="FALSE"):
         """Obtain samples"""
 
-        # Collate samples.
+        # collect samples.
         base = self.local_input
         raw_files = os.listdir(base)
 
@@ -52,7 +52,7 @@ class QtlTolls:
         if single_reads == "TRUE":
             for data in sample_names:
                 ori_samples.update(
-                    {"_".join(data[0][:marker_position]): data[1]})
+                    {"_".join(data[0]): data[1]})
         else:
             r1 = 'empty'
             r2 = r1
@@ -63,7 +63,7 @@ class QtlTolls:
                     r2 = data[1]
                 if r1 != 'empty' and r2 != 'empty':
                     ori_samples.update(
-                        {"_".join(data[0][:marker_position]): {"R1": r1, "R2": r2}})
+                        {"_".join(data[0][:-1]): {"R1": r1, "R2": r2}})
                     r1 = 'empty'
                     r2 = r1
 

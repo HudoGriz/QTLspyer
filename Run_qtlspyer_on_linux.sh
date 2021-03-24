@@ -12,13 +12,16 @@ fi
 
 docker pull hudogriz/qtl_spyer:latest
 
+echo "Stop existing container"
+docker stop qtl_spyer || true 
+
 echo "Creating root folder"
 docker run -d --rm --name qtl_lamb hudogriz/qtl_spyer:latest
 docker cp qtl_lamb:/QTLspyer/ .
 docker kill qtl_lamb
 
 echo "Starting QTLspyer"
-docker run -d --rm -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer:/QTLspyer hudogriz/qtl_spyer:latest
+docker run -d --rm -p 3838:3838 --name qtl_spyer -v $(pwd)/QTLspyer:/QTLspyer hudogriz/qtl_spyer:latest
 
 if command [ -x "$(command -v google-chrome)" ]; then
   echo "Opening local host in Google Chrome"
