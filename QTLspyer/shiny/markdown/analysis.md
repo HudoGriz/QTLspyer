@@ -19,12 +19,15 @@ simulations represent the 99% confidence interval for the true data.
 5. Confidence intervals are matched with the relevant window depth at each SNP  
 
 
-After the statistic is computed seven plots are plotted and data tables are generated.
+After the statistic is computed seven plots are plotted and three data tables are generated.
 
 1. **Raw SNP Index** - Here the raw SNP index values of both bulks are plotted in relation to genome position.  
 2. **Raw ∆SNP Index** - Here the raw SNP index difference from both bulks is plotted in relation to genome position.  
 3. **Processed SNP density** - Here the number of SNP located inside the moving window is plotted in relation to genome position.  
 4. **Processed ∆SNP density** - Here the delta SNP index is calculated for each moving window separately. Additional a Nadaraya-Watson smoothing kernel is utilized to produce tricube-smoothed statistics for analysis. These smoothed statistics function as a weighted moving average across neighboring SNPs that accounts for linkage disequilibrium.  
-5. **P value** - Here the _-log<sub>10</sub>Pval_ is plotted in relation to the genome position. Additionally the confidence interval threshold is plotted. If the values are not close to significance the threshold will not be plotted.  
+5. **P value** - Here the _-log<sub>10</sub>P-val_ is plotted in relation to the genome position. Additionally the confidence interval threshold is plotted. If the values are not close to significance the threshold will not be plotted.  
 6. **G' distribution** - Here _G'_ values are plotted cumulative. Due to the fact that p-values are estimated from the null distribution of _G'_, an important check is to see if the null distribution of _G'_ values is close to log normally distributed. Plot can inform us of which filtering method (Hampel or DeltaSNP) estimates a more accurate null distribution.  
 7. **G' statistics** - Here _G'_ values are plotted in accordance with genome position. Additionally the confidence interval threshold is plotted. If the values are not close to significance the threshold will not be plotted.  
+
+
+The plots are interactive and can be controlled and downloaded using tools from the toolbar located in the top right corner.  

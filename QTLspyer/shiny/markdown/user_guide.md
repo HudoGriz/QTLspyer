@@ -1,5 +1,5 @@
 Here is a basic step-by-step guide on how to obtain **QTL** data.
-In detail description of each step can be found in the windows bellow.
+In detail description of each step can be found in the windows below.
 
 1.  Provide the **input data**.
 2.  (Optional) Only run **FastQC** to obtain quality reports. 

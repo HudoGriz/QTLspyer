@@ -39,6 +39,7 @@ The installation can be mainly done in two ways. First is save the right install
 3. Download `Run_qtlspyer_on_windows10.bat` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_windows10.bat)
 4. Place `Run_qtlspyer_on_windows10.bat` into the created folder.  
 5. Run `Run_qtlspyer_on_windows10.bat` as **Administrator**.
+6. _(Optional)_ Redirect your internet browser to [localhost:3838](http://localhost:3838/).
 
 ### Linux
 
@@ -46,14 +47,15 @@ The installation can be mainly done in two ways. First is save the right install
 2. Create a designated folder.  
 3. Download `Run_qtlspyer_on_linux.sh` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_linux.sh).   
 4. Make script executable with `chmod +x Run_qtlspyer_on_linux.sh`.  
-5. Run `Run_qtlspyer_on_linux.sh`.  
+5. Run `Run_qtlspyer_on_linux.sh`.
+6. _(Optional)_ Redirect your internet browser to [localhost:3838](http://localhost:3838/).
 
 ### Advanced
 
 1. Download **zip** or pull repository to local with `git clone git@github.com:HudoGriz/QTLspyer.git`.  
 2. Build **Docker image** `docker build -t hudogriz/qtl_spyer:latest .` from the location of the `Dockerfile`.  
-3. Lunch the **container** with `docker run -d --rm -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest`.  
-4. _(Optional)_ For Windows use `docker run -d --rm -p 3838:3838 --name qtl_spy -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest`.  
+3. Lunch the **container** with `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest`.  
+4. _(Optional)_ For Windows use `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest`.  
 5. Redirect your browser to `localhost:3838`.  
 
 ## Usage

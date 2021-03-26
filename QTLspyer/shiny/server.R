@@ -42,9 +42,6 @@ shinyServer(function(input, output, session) {
 
   output$menu <- renderMenu({
     sidebarMenu(
-      menuItem("Info",
-        tabName = "help"
-      ),
       menuItem("Variant discovery",
         tabName = "settings"
       ),
@@ -68,6 +65,9 @@ shinyServer(function(input, output, session) {
         menuSubItem("QTL - Q statistics",
           tabName = "qtl_q"
         )
+      ),
+      menuItem("Info",
+        tabName = "help"
       )
     )
   })
@@ -150,14 +150,14 @@ shinyServer(function(input, output, session) {
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyRadioButtons(
-          inputId = "ref_gtf",
+          inputId = "reference_gtf",
           label = "General Feature Format (GTF)",
           choices = ref_gtf,
           status = "primary",
           fill = TRUE
         ),
         bsTooltip(
-          "ref_gtf",
+          "reference_gtf",
           paste(
             "Select file with the right annotation.",
             "Compressed files wont be recognized in /annotation folder."
@@ -238,13 +238,14 @@ shinyServer(function(input, output, session) {
           fill = TRUE
         ),
         bsTooltip(
-            "pipeline_includes",
-            paste(
-              "Should primary be used for skipping tools after a failed run.",
-              "Tools still expect the output files from previous tools as input"
-            ),
-            placement = "left", trigger = "hover", options = NULL
-          )
+          "pipeline_includes",
+          paste(
+            "Should primary be used for skipping tools after a failed run.",
+            "Tools still expect the output files from previous tools as input.",
+            "Can also be used for gradually executing pipeline steps."
+          ),
+          placement = "left", trigger = "hover", options = NULL
+        )
       )
     })
   })
@@ -254,20 +255,37 @@ shinyServer(function(input, output, session) {
       output$advanced_tools_settings <- renderUI(
         tagList(
           hr(),
-          title = "BBduk",
+          actionBttn(
+            inputId = "renew_log",
+            label = "renew reports",
+            style = "material-flat",
+            color = "primary",
+            size = "sm"
+          ),
+          bsTooltip(
+            "renew_log",
+            paste(
+              "Reset Progress report and Standard output log to original."
+            ),
+            placement = "left", trigger = "hover", options = NULL
+          ),
+          hr(),
+          title = "Global",
           numericInput(
-            "bbduk_cores",
+            "global_cores",
             label = "Number of cores",
             value = 8, step = 1, min = 1
           ),
           bsTooltip(
-            "bbduk_cores",
+            "global_cores",
             paste(
               "Some tools are able to take advantage of multithreading",
               "for greatly reduced processing time."
             ),
             placement = "left", trigger = "hover", options = NULL
           ),
+          hr(),
+          title = "BBduk",
           prettyRadioButtons(
             inputId = "bbduk_qtrim",
             label = "qtrim:",
@@ -435,36 +453,38 @@ shinyServer(function(input, output, session) {
     if ("python3" %in% now_running$CMD) {
       output$control_button <- renderUI({
         actionBttn(
-            inputId = "stop",
-            label = "Stop process",
-            style = "material-flat",
-            color = "danger",
-            size = "lg"
-          )
+          inputId = "stop",
+          label = "Stop process",
+          style = "material-flat",
+          color = "danger",
+          size = "lg"
+        )
       })
     }
     else {
       output$control_button <- renderUI({
         actionBttn(
-              inputId = "run",
-              label = "Start process",
-              style = "material-flat",
-              color = "primary",
-              size = "lg"
-            )
+          inputId = "run",
+          label = "Start process",
+          style = "material-flat",
+          color = "primary",
+          size = "lg"
+        )
       })
     }
   })
 
   log_data <- reactiveFileReader(
-    1000, session = session, "../log/sample_processing.log", readLines
+    1000,
+    session = session, "../log/sample_processing.log", readLines
   )
   output$log <- renderText({
     paste(log_data(), collapse = "\n")
   })
 
   log_data_so <- reactiveFileReader(
-    1000, session = session, "../log/standard_output.log", readLines
+    1000,
+    session = session, "../log/standard_output.log", readLines
   )
   output$so_log <- renderText({
     paste(log_data_so(), collapse = "\n")
@@ -488,7 +508,7 @@ shinyServer(function(input, output, session) {
 
     if (input$advanced_tools) {
       options_bbduk <- BBduk(
-        n_cores = input$bbduk_cores, ktrim = input$bbduk_ktrim,
+        n_cores = input$global_cores, ktrim = input$bbduk_ktrim,
         qtrim = input$bbduk_qtrim, trimq = input$bbduk_trimq,
         k = input$bbduk_k, mink = input$bbduk_mink,
         hdist = input$bbduk_hdist, ftm = input$bbduk_ftm,
@@ -547,6 +567,10 @@ shinyServer(function(input, output, session) {
   })
 
   observeEvent(input$stop_confirmation, {
+    if (!input$stop_confirmation) {
+      return()
+    }
+
     now_running <- get.processes()
 
     running <- paste(now_running$PID, now_running$CMD, sep = " ")
@@ -558,10 +582,14 @@ shinyServer(function(input, output, session) {
     new <- new[!new$CMD == "ps", ]
 
     for (pid in new$PID) {
-       system(paste("kill -9", as.numeric(pid)))
+      system(paste("kill -15", as.numeric(pid)))
     }
 
     system("../variant_calling/force_report.py")
+  })
+
+  observeEvent(input$renew_log, {
+    system("../variant_calling/restore_logs.py")
   })
 
   ##########
@@ -933,15 +961,43 @@ shinyServer(function(input, output, session) {
         box(
           shinycssloaders::withSpinner(plotlyOutput("p1"))
         ),
+        bsTooltip(
+            "p1",
+            paste("The distribution on this plot should be condensed,",
+            "without long tails into extreme lows or highs."),
+            placement = "left", trigger = "hover", options = NULL
+          ),
         box(
           shinycssloaders::withSpinner(plotlyOutput("p2"))
         ),
+        bsTooltip(
+            "p2",
+            paste("The distribution on this plot should be as close to a",
+            "normal distribution as possible."),
+            placement = "left", trigger = "hover", options = NULL
+          ),
         box(
           shinycssloaders::withSpinner(plotlyOutput("p3"))
         ),
+        bsTooltip(
+            "p3",
+            paste("The distribution on this plot is expected to contain two",
+            "small peaks on each end and most of the SNPs should be",
+            "approximately normally distributed around",
+            "0.5 in an F2 population"),
+            placement = "left", trigger = "hover", options = NULL
+          ),
         box(
           shinycssloaders::withSpinner(plotlyOutput("p4"))
-        )
+        ),
+        bsTooltip(
+            "p4",
+            paste("The distribution on this plot is expected to contain two",
+            "small peaks on each end and most of the SNPs should be",
+            "approximately normally distributed around",
+            "0.5 in an F2 population"),
+            placement = "left", trigger = "hover", options = NULL
+          ),
       )
     )
   })
@@ -1136,7 +1192,8 @@ shinyServer(function(input, output, session) {
       sendSweetAlert(
         session = session,
         title = "Oops",
-        text = "First you need to import the data.",
+        text = "First you need to import the data. This can be done in the 
+        Import & filtering tab above",
         type = "error"
       )
       return()
@@ -1151,9 +1208,8 @@ shinyServer(function(input, output, session) {
 
     # Get annotation
     progress$inc(1 / n, detail = paste("Obtaining annotation")) # 1
-
     tryCatch({
-        anno <- get_annotation(gtf_path = input$ref_gtf)
+      anno <- get_annotation(gtf_path = input$reference_gtf)
       },
       error = function(e) {
         sendSweetAlert(
@@ -1232,31 +1288,39 @@ shinyServer(function(input, output, session) {
         sendSweetAlert(
           session = session,
           title = "Oops",
-          text = "Something went wrong calculating G statistics.\n
-        Try changing settings or less restrictive filtering.",
+          text = "P and G statistics could not be estimated because of too many 
+          patches of missing data. Most often this is caused by too restrictive 
+          filtering and outlier removal. Try changing analysis settings or try 
+          less restrictive filtering, but please be advised that the results 
+          can be less truthful.",
           type = "error"
         )
       }
     )
 
+    g_successful <- TRUE
     if (!exists("Gprime")) {
-      return()
+      Gprime <- qtl_o
+      g_successful <- FALSE
     }
 
     # Plot
     progress$inc(1 / n, detail = paste("Creating plots")) # 5
     tryCatch({
-        p1 <- plot_nSNPs(SNPset = Gprime, line = line)
-        p2 <- plot_deltaSNP(SNPset = Gprime, line = line)
-        p3 <- plot_gprime(SNPset = Gprime, q = alpha, line = line)
-        p4 <- plot_pvalue(SNPset = Gprime, q = alpha, line = line)
-        pd_h <- plotGprimeDist(
-          SNPset = Gprime, outlierFilter = input$filter_method, binwidth = 0.5,
-          filterThreshold = as.numeric(input$filter_threshold)
-        ) + theme_minimal()
+        r_snps <- plot_raw_snps(data = Gprime)
+        rd_snp <- plot_raw_delta_snps(data = Gprime)
 
-        p <- plot_raw_snps(data = Gprime)
-        p_dif <- plot_raw_delta_snps(data = Gprime)
+        n_snps <- plot_nSNPs(SNPset = Gprime, line = line)
+        d_snps <- plot_deltaSNP(SNPset = Gprime, line = line)
+
+        if (g_successful) {
+          p_vals <- plot_pvalue(SNPset = Gprime, q = alpha, line = line)
+          gpri_d <- plotGprimeDist(
+            SNPset = Gprime, outlierFilter = input$filter_method,
+            binwidth = 0.5, filterThreshold = as.numeric(input$filter_threshold)
+          ) + theme_minimal()
+          gprime <- plot_gprime(SNPset = Gprime, q = alpha, line = line)
+        }
       },
       error = function(e) {
         sendSweetAlert(
@@ -1272,29 +1336,38 @@ shinyServer(function(input, output, session) {
 
     # Edit plotly
     progress$inc(1 / n, detail = paste("Editing plots")) # 6
-    p <- edit_plotly(p = p, names = nam, hovermode = "x unified")
-    p_dif <- edit_plotly(p = p_dif, names = nam, hovermode = "x unified")
-    p1 <- edit_plotly(p = p1, names = nam, hovermode = "x unified")
-    p2 <- edit_plotly(p = p2, names = nam, hovermode = "x unified")
-    p3 <- edit_plotly(p = p3, names = nam, hovermode = "x unified")
-    p4 <- edit_plotly(p = p4, names = nam, hovermode = "x unified")
+    r_snps <- edit_plotly(p = r_snps, names = nam, hovermode = "x unified")
+    rd_snp <- edit_plotly(p = rd_snp, names = nam, hovermode = "x unified")
+    n_snps <- edit_plotly(p = n_snps, names = nam, hovermode = "x unified")
+    d_snps <- edit_plotly(p = d_snps, names = nam, hovermode = "x unified")
+
+    if (g_successful) {
+      p_vals <- edit_plotly(p = p_vals, names = nam, hovermode = "x unified")
+      gprime <- edit_plotly(p = gprime, names = nam, hovermode = "x unified")
+    }
 
     # Render plots
     progress$inc(1 / n, detail = paste("Rendering plots")) # 7
-    output$render_proc_n <- renderPlotly(p1)
-    output$render_proc_diff <- renderPlotly(p2)
-    output$render_gprime <- renderPlotly(p3)
-    output$render_pvalue <- renderPlotly(p4)
-    output$render_raw_n <- renderPlotly(p)
-    output$render_raw_diff <- renderPlotly(p_dif)
-    output$render_gdistribution <- renderPlot(pd_h)
+    output$render_proc_n <- renderPlotly(n_snps)
+    output$render_proc_diff <- renderPlotly(d_snps)
+    output$render_raw_n <- renderPlotly(r_snps)
+    output$render_raw_diff <- renderPlotly(rd_snp)
+
+    if (g_successful) {
+      output$render_pvalue <- renderPlotly(p_vals)
+      output$render_gdistribution <- renderPlot(gpri_d)
+      output$render_gprime <- renderPlotly(gprime)
+    }
 
     outputOptions(output, "render_proc_n", suspendWhenHidden = FALSE)
     outputOptions(output, "render_proc_diff", suspendWhenHidden = FALSE)
-    outputOptions(output, "render_gprime", suspendWhenHidden = FALSE)
     outputOptions(output, "render_raw_n", suspendWhenHidden = FALSE)
     outputOptions(output, "render_raw_diff", suspendWhenHidden = FALSE)
-    outputOptions(output, "render_pvalue", suspendWhenHidden = FALSE)
+
+    if (g_successful) {
+      outputOptions(output, "render_pvalue", suspendWhenHidden = FALSE)
+      outputOptions(output, "render_gprime", suspendWhenHidden = FALSE)
+    }
 
     # Generate table
     progress$inc(1 / n, detail = paste("Creating table")) # 8
@@ -1316,30 +1389,39 @@ shinyServer(function(input, output, session) {
       options = list(scrollX = TRUE)
     )
 
-    Gprime_df <- getQTLTable(
-      SNPset = Gprime,
-      method = "Gprime",
-      alpha = alpha,
-      export = FALSE
-    )
+    if (g_successful) {
+      Gprime_df <- getQTLTable(
+        SNPset = Gprime,
+        method = "Gprime",
+        alpha = alpha,
+        export = FALSE
+      )
 
-    output$gprime_table <- renderDataTable(
-      Gprime_df,
-      options = list(scrollX = TRUE)
-    )
-
+      output$gprime_table <- renderDataTable(
+        Gprime_df,
+        options = list(scrollX = TRUE)
+      )
+    }
 
     # Save to global variable
     snp_table(Gprime)
-    qtl_tables(list(QTLseq = QTLseq_df, Gprime = Gprime_df))
+    if (g_successful) {
+      qtl_tables(list(QTLseq = QTLseq_df, Gprime = Gprime_df))
+    }
+    else {
+      qtl_tables(list(QTLseq = QTLseq_df, Gprime = NULL))
+    }
     annotation(anno)
 
-    traces$render_raw_n <- length(p$x$data)
-    traces$render_raw_diff <- length(p_dif$x$data)
-    traces$render_proc_n <- length(p1$x$data)
-    traces$render_proc_diff <- length(p2$x$data)
-    traces$render_gprime <- length(p3$x$data)
-    traces$render_pvalue <- length(p4$x$data)
+    traces$render_raw_n <- length(r_snps$x$data)
+    traces$render_raw_diff <- length(rd_snp$x$data)
+    traces$render_proc_n <- length(n_snps$x$data)
+    traces$render_proc_diff <- length(d_snps$x$data)
+
+    if (g_successful) {
+      traces$render_pvalue <- length(p_vals$x$data)
+      traces$render_gprime <- length(gprime$x$data)
+    }
 
     # Render UI
     output$results <- renderUI(
@@ -1534,4 +1616,33 @@ shinyServer(function(input, output, session) {
       )
     }
   )
+
+  ##################
+  # Exit container #
+  ##################
+
+  observeEvent(input$exit, {
+    confirmSweetAlert(
+      session,
+      "exit_confirmation",
+      title = "Exit QTLspyer",
+      text = paste(
+        "This will shoot down the docker container",
+        "and end all running processes inside.",
+        "To access the app again you will need to re-run QTLspyer.",
+        "Are you sure you want to exit?"
+      ),
+      type = "warning",
+      btn_labels = c("No", "Yes"),
+      btn_colors = NULL,
+    )
+  })
+
+  observeEvent(input$exit_confirmation, {
+    if (!input$exit_confirmation) {
+      return()
+    }
+
+    system("kill -15 1")
+  })
 })

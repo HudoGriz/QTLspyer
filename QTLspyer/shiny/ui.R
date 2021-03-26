@@ -1,6 +1,12 @@
 dashboardPage(
   dashboardHeader(
-    title = "QTLspyer"
+    title = "QTLspyer",
+    tags$li(class = "dropdown",
+            tags$li(
+              class = "dropdown",
+              actionLink("exit", "", class = "fas fa-power-off")
+              )
+              )
   ),
   dashboardSidebar(sidebarMenuOutput("menu")),
   dashboardBody(

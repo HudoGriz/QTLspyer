@@ -13,13 +13,13 @@ _Visual representation of the pipeline. The tools named on pages are used on eac
 _Tools named outside are used on samples combined._
 (Source: [GATK](https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-))
 
-The **optional process**are the ones that can be skipped or included in a pipeline. Note that this is not the same as **Pipeline steps**. If the optional steps are unmarked the pipeline will skip this step by providing the given tools inputs to the next tool. For example skipping the trimming can be achieved by unmarking it from the optional process but leaving it market in processes steps. If we were to unmark it in the processes steps the pipeline would understand it as that the trimming has already been done but we wish to skip it in this run. So the next tool will search for the trimmed sequences.
+The **optional process** are the ones that can be skipped or included in a pipeline. Note that this is not the same as **Pipeline steps**. If the optional steps are unmarked the pipeline will skip those steps by providing inputs to the next tool. For example skipping the trimming can be achieved by unmarking it from the optional process but leaving it market in Pipeline steps. If we were to unmark it in the Pipeline steps the pipeline would understand it as that the trimming has already been done but we wish to skip it in this run. So the next tool will search for the trimmed sequences.
 
 The **reference** files appear automatically after insertion in the folder. At most a page refresh is required.
 
 **Advanced options** can be toggled on or off for further customization of the pipeline. For in detail description of parameters and tools functionalities please refer to the referral links provided for each tool below.
 
-The steps in **pipeline includes** should be exclusively used for skipping when running a failed pipeline again. The process will fail if a tool can not locate its input file.
+The steps in **Pipeline steps** should be exclusively used for skipping when running a failed pipeline again. The process will fail if a tool can not locate its input file.
 
 ### Output boxes
 

@@ -1,6 +1,3 @@
-# if (!requireNamespace("BiocManager", quietly = TRUE))
-#   install.packages("BiocManager")
-
 library(shiny)
 library(shinydashboard)
 library(plotly)
