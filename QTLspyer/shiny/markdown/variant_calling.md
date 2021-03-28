@@ -25,7 +25,7 @@ The steps in **Pipeline steps** should be exclusively used for skipping when run
 
 In the **progress report** the time and the information about the outcome of each tool will be printed. Therefore the prime purpose of this display is the tracking of pipeline steps.
 
-The standard output of each tool will be printed inside the **Standard output** box. Therefore the prime purpose of this display is in detail tracking of tools or debugging a failed status observed in the progress report.
+The standard output of each tool will be printed inside the **Standard output** box. Therefore the prime purpose of this display is in detail tracking of tools or debugging a failed status observed in the progress report. Each tool report is separated by a line of `===`.
 
 
 ### Tools

@@ -25,7 +25,7 @@ Paired-end example:
 
 #### Reference data
 
-Here the reference organism genome should be provided in `.fasta` format. A reference genome for _Saccharomyces cerevisiae_ is already provided. The genome was taken from [NCBI](https://www.ncbi.nlm.nih.gov/genome/?term=Saccharomyces%20cerevisiae%5BOrganism%5D&cmd=DetailsSearch). The reference genome is used for read alignment. Additionally a `.vcf` of known SNPs for the studied organism is required. A generic file for _Saccharomyces cerevisiae_ is already provided. The file was obtained from [Ensembl](https://fungi.ensembl.org/Saccharomyces_cerevisiae/Info/Index).
+Here the reference organism genome should be provided in `.fasta` format. A reference genome for _Saccharomyces cerevisiae_ is already provided. The genome was taken from [NCBI](https://www.ncbi.nlm.nih.gov/genome/?term=Saccharomyces%20cerevisiae%5BOrganism%5D&cmd=DetailsSearch). The reference genome is used for read alignment. Additionally a `.vcf` of known SNPs for the studied organism is required. A generic file for _Saccharomyces cerevisiae_ is already provided. The file was obtained from [Ensembl](https://fungi.ensembl.org/Saccharomyces_cerevisiae/Info/Index). The `.vcf` file is needed for **Base Quality Score Recalibration (BQSR)** with GATK.
 
 #### Annotation data
 
