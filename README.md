@@ -56,7 +56,7 @@ The installation can be mainly done in two ways. First is save the right install
 2. Build **Docker image** `docker build -t hudogriz/qtl_spyer:latest .` from the location of the `Dockerfile`.  
 3. Lunch the **container** with `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest`.  
 4. _(Optional)_ For Windows use `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest`.  
-5. Redirect your browser to `localhost:3838`.  
+5. Redirect your browser to [localhost:3838](http://localhost:3838/).  
 
 ## Usage
 

@@ -963,8 +963,11 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
             "p1",
-            paste("The distribution on this plot should be condensed,",
-            "without long tails into extreme lows or highs."),
+            paste(
+              "Histogram shows cumulative read depths of low and high bulk.",
+              "The distribution on this plot should be condensed,",
+              "without long tails into extreme lows or highs."
+              ),
             placement = "left", trigger = "hover", options = NULL
           ),
         box(
@@ -972,8 +975,11 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
             "p2",
-            paste("The distribution on this plot should be as close to a",
-            "normal distribution as possible."),
+            paste(
+              "Histogram shows total reference allele frequency.",
+              "The distribution on this plot should be as close to a",
+              "normal distribution as possible."
+              ),
             placement = "left", trigger = "hover", options = NULL
           ),
         box(
@@ -981,10 +987,13 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
             "p3",
-            paste("The distribution on this plot is expected to contain two",
-            "small peaks on each end and most of the SNPs should be",
-            "approximately normally distributed around",
-            "0.5 in an F2 population"),
+            paste(
+              "Histogram shows SNP-index distribution of high bulk.",
+              "The distribution on this plot is expected to contain two",
+              "small peaks on each end and most of the SNPs should be",
+              "approximately normally distributed around",
+              "0.5 in an F2 population."
+              ),
             placement = "left", trigger = "hover", options = NULL
           ),
         box(
@@ -992,10 +1001,13 @@ shinyServer(function(input, output, session) {
         ),
         bsTooltip(
             "p4",
-            paste("The distribution on this plot is expected to contain two",
-            "small peaks on each end and most of the SNPs should be",
-            "approximately normally distributed around",
-            "0.5 in an F2 population"),
+            paste(
+              "Histogram shows SNP-index distribution of low bulk.",
+              "The distribution on this plot is expected to contain two",
+              "small peaks on each end and most of the SNPs should be",
+              "approximately normally distributed around",
+              "0.5 in an F2 population."
+              ),
             placement = "left", trigger = "hover", options = NULL
           ),
       )
@@ -1193,7 +1205,7 @@ shinyServer(function(input, output, session) {
         session = session,
         title = "Oops",
         text = "First you need to import the data. This can be done in the 
-        Import & filtering tab above",
+        Import & filtering tab above.",
         type = "error"
       )
       return()
