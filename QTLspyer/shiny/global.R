@@ -35,7 +35,7 @@ names(pipeline_scripts) <- c(
   "Light weight (Pipeline without BQSR)")
 
 pipelines_elements <- list(
-  "cene_variant_calling_script.py" = c(
+  "no_bqsr_variant_calling_script.py" = c(
     "Trimming", "Mapping", "Read Groups Processing",
     "Marking Duplicates", "Variant Calling", "Combine GVCFs",
     "Filtering Out SNPs", "Quality Filtering VCF", "Variants To Table"
