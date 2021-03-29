@@ -16,7 +16,7 @@ docker cp qtl_lamb:/QTLspyer/ .
 docker kill qtl_lamb
 
 echo "Starting QTLspyer"
-docker run -d --rm --init -p 3838:3838 --name qtl_spyer -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest
+docker run -d --rm --init -p 3838:3838 --name qtl_spyer -v %~dp0/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest
 
 start "" http://localhost:3838
 
