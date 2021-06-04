@@ -1,5 +1,5 @@
-The results of the analysis are in addition to plots also provided in form of three data tables. Each of them can be downloaded via the download button.
-In the **SNPs** tab the statistic for each detected _SNP_ is provided. The second tab, **QTL - ∆SNP statistic** summarizes the chromosomal positions where _∆SNP_ was above the given threshold. The third tab, **QTL - Q statistic** summarizes the chromosomal positions where _Q'_ was above the given threshold. If no entries are given for the second and third data table it is because there are no chromosomal areas above the set threshold.
+The results of the analysis are in addition to plots also provided in the form of three data tables. Each of them can be downloaded via the download button.
+In the **SNP results** tab, the statistic for each detected _SNP_ are provided. The second tab, **QTL-seq results** summarizes the QTLs found by the **QTL-seq** approach. The third tab, **G' results** summarizes the QTLs found by the **G’** approach. If no entries are present in the second and third data table, no chromosomal areas above the set threshold were found.
 
     - POS - genome position
     - REF - Reference nucleotide
@@ -44,8 +44,3 @@ In the **SNPs** tab the statistic for each detected _SNP_ is provided. The secon
     - AUCaT - the Area Under the Curve but above the Threshold line, an indicator of how significant or wide the peak is
     - meanPval - the average p-value in the region
     - meanQval - the average adjusted p-value in the region
-
-
-    
-
-

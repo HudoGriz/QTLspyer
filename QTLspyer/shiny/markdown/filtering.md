@@ -4,7 +4,7 @@ of findings and decrease the false discovery rate. This can be done by
 filtering some of the low confidence SNPs and SNPs that may be in repetitive regions and
 thus have inflated read depth.
 
-To simplify the search for the best parameters we can observe the four histograms.
+To simplify the search for the best parameters, we can observe the four histograms.
 
 The first histogram is of **read depths**. It should be condensed, without long tails into extreme lows or highs.
 

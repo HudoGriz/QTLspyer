@@ -21,7 +21,10 @@
 
 ## About
 
-This application was created as my master thesis project. Its goal is to make a **QTL bulk** analysis using NGS data faster, repeatable and easier for the user. This is achieved by using a `python` script which connects **GATK** tools into a customizable pipeline. A `R Shiny` app allows for easy pipeline customization, data filtration and result visualization. To spare the users from all the installation steps of tools and dependencies the whole project is available in form of a Docker image. To simplify the installation process scripts for installing on **Windows 10** and **Linux** have been provided. All that the user is required to manually install is a **Docker** version compatible with his os.  
+This application was created as my master's thesis project. Its goal is to make a **QTL bulk** analysis using NGS data faster, repeatable and user-friendly. This is achieved by using a `python` script which connects **GATK** tools into a customizable pipeline. A `R Shiny` app allows for easy pipeline customization, data filtration and result visualization. 
+To increase the ease of use and portability, QTLspyer is fully contained inside a **Docker** image and can be run on any operating system with Docker support. Furthermore, the user is not required to manually install any software involved in a QTL analysis. The application guides the user through the analysis by providing a detailed description of every required step and setting, while also providing sane default values of each parameter. QTLspyer can analyse data from any organism if correct annotation and reference data is provided.
+
+To simplify the installation process, scripts for starting the app on **Windows 10** and **Linux** have been provided. In order for the scripts to work Docker has to be installed in advance. 
 * Project status: **prototype**
 
 Docker image:
@@ -30,7 +33,7 @@ Docker image:
 
 ## Installation
 
-The installation can be mainly done in two ways. First is save the right installation script inside a designated folder and run it. The second way is to copy this repository to a local computer and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .` in the same directory as the `Dockerfile`. I recommend the first one as it is easier. Both steps require a pre-installed **Docker**.
+The installation can be mainly done in two ways. First is save the right installation script inside a designated folder and run it. The second way is to copy this repository to a local computer and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .` in the same directory as the `Dockerfile`. I recommend the first way as it is easier. Both steps require a pre-installed **Docker**.
 
 ### Windows
 
@@ -46,13 +49,13 @@ The installation can be mainly done in two ways. First is save the right install
 1. Install [**Docker**](https://docs.docker.com/engine/install/ubuntu/) for Linux.  
 2. Create a designated folder.  
 3. Download `Run_qtlspyer_on_linux.sh` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_linux.sh).   
-4. Make script executable with `chmod +x Run_qtlspyer_on_linux.sh`.  
+4. Make the script executable with `chmod +x Run_qtlspyer_on_linux.sh`.  
 5. Run `Run_qtlspyer_on_linux.sh`.
 6. _(Optional)_ Redirect your internet browser to [localhost:3838](http://localhost:3838/).
 
 ### Advanced
 
-1. Download **zip** or pull repository to local with `git clone git@github.com:HudoGriz/QTLspyer.git`.  
+1. Download **zip** or pull the repository to local with `git clone git@github.com:HudoGriz/QTLspyer.git`.  
 2. Build **Docker image** `docker build -t hudogriz/qtl_spyer:latest .` from the location of the `Dockerfile`.  
 3. Lunch the **container** with `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest`.  
 4. _(Optional)_ For Windows use `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest`.  
@@ -88,6 +91,10 @@ The main use of the app is to run the **GATK** - _Germline short variant discove
 <i>Panel with the results. </i>
 <br/><br/>
 <br/><br/>
+<p align="left"><img src="QTLspyer/shiny/www/p_stat_example.png" width="700" alt="Variant calling tab"></p>
+<i>Example of exported p-value visualization. </i>
+<br/><br/>
+<br/><br/>
 
 
 ## Code
@@ -118,7 +125,7 @@ The code is organized into two parts. The first part is in `python`. A `class` o
 
 ### Requirements and limitations
 
-The variant calling pipeline is recurse intensive. The recommended specs are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmark processes with 1-3 GB `.fastq` samples took 2-4 hours on 32GB of RAM and 8 core processor. Samples between 5-10 GB can reach up to 15 hours. Make sure to have enough space on the hard drive. For every GB of input data we can expect on average 7 GB of output information.
+The variant calling pipeline is resource intensive. The recommended specs are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmark processes with 1-3 GB `.fastq` samples took 2-4 hours on 32GB of RAM and 8 core processors. Samples between 5-10 GB can reach up to 15 hours. Make sure to have enough space on the hard drive. For every GB of input data we can expect on average 7 GB of output information.
  
 
 ## Resources
@@ -193,10 +200,13 @@ Docker:
 > Linux Journal, 2014(239), 2.
 
 Thanks:
-> Special thanks to [Genialis](https://www.genialis.com/) for [resolwebio/rnaseq](https://hub.docker.com/r/resolwebio/rnaseq) and cooperation in this project.  
 > To my mentors [Assist. Prof. Dr. Cene Gostinčar](https://scholar.google.com/citations?user=D82dKecAAAAJ&hl=en) and [Dr. Janez Kokosar](https://github.com/jkokosar).  
+> To [Prof. Dr. Uroš Petrovič](https://scholar.google.com/citations?hl=en&user=dWCi8bAAAAAJ&view_op=list_works&sortby=pubdate) for guidance.  
 > To [Dr. Roman Luštrik](https://github.com/romunov) for his help with technical matters.  
-> (TODO)
+> To Ana Markež for being a persistent alpha tester.  
+
+
+> Special thanks to [Genialis](https://www.genialis.com/) for [resolwebio/rnaseq](https://hub.docker.com/r/resolwebio/rnaseq) and cooperation in this project.  
 
 ## License
 

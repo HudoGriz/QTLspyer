@@ -5,7 +5,7 @@ The page consists of an input box to the left and two output boxes to the right.
 
 An experiment name needs to be provided which is used for unique file name generation of output files.  
 
-There are two workflows available. Both pipelines follow the **GATK best practice** instruction for germline short variant discovery. The main difference is in the inclusion of **base quality score recalibration** (GQSR). The other minor difference is in the calling order for **duplicates marking** and **read group processing**. The GATK best practice pipeline is more resource intensive and requires longer to complete. Results from both pipelines do not significantly differ.
+There are two workflows available. Both pipelines follow the **GATK best practice** instruction for germline short variant discovery. The major difference is in the inclusion of **base quality score recalibration** (GQSR). The other minor difference is in the calling order for **duplicates marking** and **read group processing**. The GATK best practice pipeline is more resource intensive and requires longer to complete. Results from both pipelines do not significantly differ.
 
 <img src="../www/germline_best_practice.png" width="700">
 
@@ -13,28 +13,25 @@ _Visual representation of the pipeline. The tools named on pages are used on eac
 _Tools named outside are used on samples combined._
 (Source: [GATK](https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-))
 
-The **optional process** are the ones that can be skipped or included in a pipeline. Note that this is not the same as **Pipeline steps**. If the optional steps are unmarked the pipeline will skip those steps by providing inputs to the next tool. For example skipping the trimming can be achieved by unmarking it from the optional process but leaving it market in Pipeline steps. If we were to unmark it in the Pipeline steps the pipeline would understand it as that the trimming has already been done but we wish to skip it in this run. So the next tool will search for the trimmed sequences.
+The **optional process** are the ones that can be skipped or included in a pipeline. Note that this is not the same as **Pipeline steps**. If the optional steps are unmarked, the pipeline will skip those steps by providing inputs to the next tool. For example, skipping the trimming can be achieved by unmarking it from the optional process but leaving it market in pipeline steps. If we were to unmark it in the Pipeline steps, the pipeline would understand it as that the trimming has already been done but we wish to skip it in this run. So the next tool will search for the trimmed sequences as input.
 
 The **reference** files appear automatically after insertion in the folder. At most a page refresh is required.
 
-**Advanced options** can be toggled on or off for further customization of the pipeline. For in detail description of parameters and tools functionalities please refer to the referral links provided for each tool below.
+**Advanced options** can be toggled on or off for further customization of the pipeline. For a detailed description of parameters and tool functionalities, please refer to the referral links provided for each tool below.
 
 The steps in **Pipeline steps** should be exclusively used for skipping when running a failed pipeline again. The process will fail if a tool can not locate its input file.
 
 ### Output boxes
 
-In the **progress report** the time and the information about the outcome of each tool will be printed. Therefore the prime purpose of this display is the tracking of pipeline steps.
+In the **progress report** the time and information about the outcome of each tool is printed. Therefore, the prime purpose of this display is the tracking of pipeline steps.
 
-The standard output of each tool will be printed inside the **Standard output** box. Therefore the prime purpose of this display is in detail tracking of tools or debugging a failed status observed in the progress report. Each tool report is separated by a line of `===`.
-
+The standard output of each tool will be printed inside the **Standard output** box. Therefore, the prime purpose of this display is tracking tool output. This can be used for debugging a failed status observed in the progress report. A line of `===` separates each tool report.  
 
 ### Tools
 
 #### FastQC
 
-FastQC aims to provide a simple way to do some quality control checks on raw sequence data coming from high throughput
-sequencing pipelines. It provides a modular set of analyses which you can use to give a quick impression of whether your
-data has any problems of which you should be aware before doing any further analysis
+FastQC aims to provide a simple way to do quality control checks on raw sequence data coming from high throughput sequencing pipelines. It provides a modular set of analyses which you can use to give a quick impression of whether your data has any problems of which you should be aware before doing any further analysis
 ([source](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
 
 FastQC can be run before trimming and after trimming. The following [manual](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf)
@@ -43,7 +40,7 @@ can help with the understanding of the output report.
 #### BBduk
 
 This is the software that is used for input sequence trimming. Trimming is an optional step and can be avoided by deselecting it.
-In detail description about the tool can be found [here](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf).  
+Description about the tool can be found [here](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf).  
 For questions about advanced options reference the [man-page](https://manpages.debian.org/testing/bbmap/bbduk.sh.1.en.html).
 
 Single-end:  
@@ -62,8 +59,7 @@ minlen={minlen} threads={n_cores}
 
 #### Burrows-Wheeler Aligner (BWA)
 
-**BWA-MEM** is used to align sample sequences to the reference genome. Separate variants are performed if sequences
-are _single-end_ or _pair-end_. For more details reference [man pages](http://bio-bwa.sourceforge.net/bwa.shtml).
+**BWA-MEM** is used to align sample sequences to the reference genome. Separate variants are performed if sequences are _single-end_ or _pair-end_. For more details reference the [man pages](http://bio-bwa.sourceforge.net/bwa.shtml).
 
 Single-end:  
 `bwa mem -t {core} -M {reference} {input1}`  
