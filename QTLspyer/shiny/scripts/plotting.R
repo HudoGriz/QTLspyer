@@ -16,34 +16,35 @@ plot_deltaSNP <- function(SNPset, line) {
 
   p <- plot_base(SNPset, lab = "\u0394SNP index", var = var)
 
-  p <- p + ylim(-0.55, 0.55) +
+  p <- p + ylim(-1, 1) +
     geom_hline(yintercept = 0, color = "black", alpha = 0.4)
 
   ints_df <- dplyr::select(SNPset, CHROM, POS, dplyr::matches("CI_")) %>% tidyr::gather(key = "Interval", value = "value", -CHROM, -POS)
   delta_df <- dplyr::select(SNPset, CHROM, POS, dplyr::matches(var)) %>% tidyr::gather(key = "Interval", value = "value", -CHROM, -POS)
   tri_df <- dplyr::select(SNPset, CHROM, POS, dplyr::matches(var2)) %>% tidyr::gather(key = "Interval", value = "value", -CHROM, -POS)
 
-  cdata_df <- rbind(delta_df, tri_df)
-
   if (line) {
     p <- p + geom_line(data = ints_df, aes(x = POS, y = value, color = Interval)) +
       geom_line(data = ints_df, aes(x = POS, y = -value, color = Interval)) +
-      geom_line(data = cdata_df, aes(x = POS, y = value, color = Interval))
+      geom_line(data = delta_df, aes(x = POS, y = value, color = Interval), alpha=0.5) +
+      geom_line(data = tri_df, aes(x = POS, y = value, color = Interval))
   }
 
   if (!line) {
     p <- p + geom_line(data = ints_df, aes(x = POS, y = value, color = Interval)) +
       geom_line(data = ints_df, aes(x = POS, y = -value, color = Interval)) +
-      geom_point(data = cdata_df, aes(x = POS, y = value, color = Interval))
+      geom_point(data = delta_df, aes(x = POS, y = value, color = Interval), alpha=0.5) +
+      geom_point(data = tri_df, aes(x = POS, y = value, color = Interval))
   }
 
-  color <- randomColor(length(unique(ints_df$Interval)), luminosity = "bright")
+  color <- randomColor(length(unique(ints_df$Interval)), luminosity = "bright", hue="green")
 
   p <- p + facet_grid(CHROM ~ ., scales = "free_x", space = "free_x") +
     theme_minimal() +
-    scale_color_manual("", values = c(color, "#222d32", "#3f9aff")) +
+    scale_color_manual("", values = c(color, "#3f9aff", "#222d32")) +
     theme(
-      panel.spacing = unit(0.09, "lines"),
+      strip.text.y = element_text(angle = 0, size = 15),
+      panel.spacing = unit(2, "mm"),
       plot.margin = unit(c(5, 30, 30, 20), "mm")
     )
 
@@ -86,14 +87,15 @@ plot_raw_snps <- function(data) {
     ) +
     ylim(-0.05, 1.05) +
     geom_hline(yintercept = 0.5, color = "black", alpha = 0.4) +
-    geom_line(aes(x = POS, y = SNPindex.LOW, color = "Low")) +
-    geom_line(aes(x = POS, y = SNPindex.HIGH, color = "High")) +
+    geom_line(aes(x = POS, y = SNPindex.LOW, color = "Low"), alpha = 0.5) +
+    geom_line(aes(x = POS, y = SNPindex.HIGH, color = "High"), alpha = 0.5) +
     scale_color_manual("", values = c("Low" = "#222d32", "High" = "#3f9aff")) +
     ylab("SNP index") +
     xlab("Genomic Position (Mb)") +
     facet_grid(CHROM ~ ., scales = "free_x", space = "free_x") +
     theme_minimal() +
     theme(
+      strip.text.y = element_text(angle = 0, size = 15),
       panel.spacing = unit(0.09, "lines"),
       plot.margin = unit(c(5, 30, 30, 20), "mm")
     )
@@ -120,6 +122,7 @@ plot_raw_delta_snps <- function(data) {
     facet_grid(CHROM ~ ., scales = "free_x", space = "free_x") +
     theme_minimal() +
     theme(
+      strip.text.y = element_text(angle = 0, size = 15),
       panel.spacing = unit(0.09, "lines"),
       plot.margin = unit(c(5, 30, 30, 20), "mm")
     )

@@ -56,13 +56,13 @@ shinyServer(function(input, output, session) {
       ),
       menuItem("Data tables",
         tabName = "table",
-        menuSubItem("SNPs",
+        menuSubItem("SNP results",
           tabName = "snp_stat"
         ),
-        menuSubItem("QTL - \u0394SNP statistics",
+        menuSubItem("QTL-seq results",
           tabName = "qtl_delta"
         ),
-        menuSubItem("QTL - Q statistics",
+        menuSubItem("G' results",
           tabName = "qtl_q"
         )
       ),
@@ -840,6 +840,9 @@ shinyServer(function(input, output, session) {
       lowBulk = low_bulk
     )
 
+    # Data frame type assignment
+    df$CHROM <- as.numeric(df$CHROM)
+
     # Save to global
     progress$inc(2 / n, detail = paste("Saving")) # 2
     chromosomes(unique(df$CHROM))
@@ -1455,13 +1458,13 @@ shinyServer(function(input, output, session) {
           plotlyOutput("render_proc_diff", height = "1500px")
         ),
         tabPanel(
-          "P value", plotlyOutput("render_pvalue", height = "1500px")
-        ),
-        tabPanel(
           "G’ distribution", plotOutput("render_gdistribution")
         ),
         tabPanel(
           "G’ Statistics", plotlyOutput("render_gprime", height = "1500px")
+        ),
+        tabPanel(
+          "P value", plotlyOutput("render_pvalue", height = "1500px")
         )
       )
     )
@@ -1557,7 +1560,7 @@ shinyServer(function(input, output, session) {
 
   output$save_dataframe_snps <- downloadHandler(
     filename = function() {
-      sprintf("snps_results_%s.txt", input$ex_name)
+      sprintf("snp_results_%s.txt", input$ex_name)
     },
     content = function(con) {
       write.table(
@@ -1587,7 +1590,7 @@ shinyServer(function(input, output, session) {
 
   output$save_dataframe_deltasnp <- downloadHandler(
     filename = function() {
-      sprintf("snp_regions_results_%s.txt", input$ex_name)
+      sprintf("qtl_seq_results_%s.txt", input$ex_name)
     },
     content = function(con) {
       write.table(
@@ -1618,7 +1621,7 @@ shinyServer(function(input, output, session) {
 
   output$save_dataframe <- downloadHandler(
     filename = function() {
-      sprintf("qtl_results_%s.txt", input$ex_name)
+      sprintf("qtl_g_results_%s.txt", input$ex_name)
     },
     content = function(con) {
       write.table(

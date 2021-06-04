@@ -40,7 +40,7 @@ mark_gene <- function(session, p, position, chromosomes, col) {
       hoverinfo = "text",
       hovertext = c(
         paste(
-          "Gene ID:", position$CHROM,
+          "Chromosome ID:", position$CHROM,
           "<br>Gene ID:", position$gene_id,
           "<br>Gene name:", position$gene,
           "<br>Start:", position$start,
