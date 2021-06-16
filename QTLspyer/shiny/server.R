@@ -10,8 +10,7 @@ shinyServer(function(input, output, session) {
     render_proc_n = NULL,
     render_proc_diff = NULL,
     render_gprime = NULL,
-    render_raw_n = NULL,
-    render_raw_diff = NULL
+    render_raw_n = NULL
   )
 
   ref_fastas <- list.files(path = "../input/references/", pattern = "\\.fasta$")
@@ -875,7 +874,9 @@ shinyServer(function(input, output, session) {
         numericInput(
           "refAlleleFreq",
           label = "Reference allele frequency",
-          value = 0.0005
+          value = 0.1,
+          max = 1,
+          min = 0
         ),
         bsTooltip(
           "refAlleleFreq",
@@ -889,7 +890,8 @@ shinyServer(function(input, output, session) {
         numericInput(
           "minTotalDepth",
           label = "Min total read depth",
-          value = 10
+          value = 100,
+          min = 0
         ),
         bsTooltip(
           "minTotalDepth",
@@ -901,7 +903,8 @@ shinyServer(function(input, output, session) {
         numericInput(
           "maxTotalDepth",
           label = "Max total read depth",
-          value = 4000
+          value = 4000,
+          min = 0
         ),
         bsTooltip(
           "maxTotalDepth",
@@ -911,7 +914,8 @@ shinyServer(function(input, output, session) {
         numericInput(
           "minSampleDepth",
           label = "Min sample depth",
-          value = 1
+          value = 1,
+          min = 0
         ),
         bsTooltip(
           "minSampleDepth",
@@ -921,7 +925,8 @@ shinyServer(function(input, output, session) {
         numericInput(
           "depthDifference",
           label = "Depth difference",
-          value = 2000
+          value = 1000,
+          min = 0
         ),
         bsTooltip(
           "depthDifference",
@@ -933,7 +938,8 @@ shinyServer(function(input, output, session) {
         numericInput(
           "minGQ",
           label = "Min GQ",
-          value = 1
+          value = 10,
+          min = 0
         ),
         bsTooltip(
           "minGQ",
@@ -1066,12 +1072,14 @@ shinyServer(function(input, output, session) {
           numericInput(
             "bulkSize_high",
             label = "High bulk (pool) size",
-            value = 25
+            value = 25,
+            min = 1
           ),
           numericInput(
             "bulkSize_low",
             label = "Low bulk (pool) size",
-            value = 35
+            value = 35,
+            min = 1
           ),
           prettyRadioButtons(
             inputId = "filter_method",
@@ -1097,7 +1105,8 @@ shinyServer(function(input, output, session) {
           numericInput(
             "replications",
             label = "Bootstrap replications",
-            value = 1000
+            value = 10000,
+            min = 1
           ),
           bsTooltip(
             "replications",
@@ -1111,7 +1120,8 @@ shinyServer(function(input, output, session) {
           numericInput(
             "windowSize",
             label = "Window size",
-            value = 1e5
+            value = 1e5,
+            min = 100
           ),
           bsTooltip(
             "windowSize",
@@ -1143,7 +1153,9 @@ shinyServer(function(input, output, session) {
           numericInput(
             "intervals",
             label = "Confidence intervals",
-            value = 95
+            value = 95,
+            max = 100,
+            min = 1
           ),
           bsTooltip(
             "intervals",
@@ -1158,7 +1170,9 @@ shinyServer(function(input, output, session) {
           numericInput(
             "filter_threshold",
             label = "Filter threshold",
-            value = 0.1
+            value = 0.1,
+            min = 0.0001,
+            max = 0.5
           ),
           bsTooltip(
             "filter_threshold",
@@ -1323,7 +1337,6 @@ shinyServer(function(input, output, session) {
     progress$inc(1 / n, detail = paste("Creating plots")) # 5
     tryCatch({
         r_snps <- plot_raw_snps(data = Gprime)
-        rd_snp <- plot_raw_delta_snps(data = Gprime)
 
         n_snps <- plot_nSNPs(SNPset = Gprime, line = line)
         d_snps <- plot_deltaSNP(SNPset = Gprime, line = line)
@@ -1352,7 +1365,6 @@ shinyServer(function(input, output, session) {
     # Edit plotly
     progress$inc(1 / n, detail = paste("Editing plots")) # 6
     r_snps <- edit_plotly(p = r_snps, names = nam, hovermode = "x unified")
-    rd_snp <- edit_plotly(p = rd_snp, names = nam, hovermode = "x unified")
     n_snps <- edit_plotly(p = n_snps, names = nam, hovermode = "x unified")
     d_snps <- edit_plotly(p = d_snps, names = nam, hovermode = "x unified")
 
@@ -1366,7 +1378,6 @@ shinyServer(function(input, output, session) {
     output$render_proc_n <- renderPlotly(n_snps)
     output$render_proc_diff <- renderPlotly(d_snps)
     output$render_raw_n <- renderPlotly(r_snps)
-    output$render_raw_diff <- renderPlotly(rd_snp)
 
     if (g_successful) {
       output$render_pvalue <- renderPlotly(p_vals)
@@ -1377,7 +1388,6 @@ shinyServer(function(input, output, session) {
     outputOptions(output, "render_proc_n", suspendWhenHidden = FALSE)
     outputOptions(output, "render_proc_diff", suspendWhenHidden = FALSE)
     outputOptions(output, "render_raw_n", suspendWhenHidden = FALSE)
-    outputOptions(output, "render_raw_diff", suspendWhenHidden = FALSE)
 
     if (g_successful) {
       outputOptions(output, "render_pvalue", suspendWhenHidden = FALSE)
@@ -1429,7 +1439,6 @@ shinyServer(function(input, output, session) {
     annotation(anno)
 
     traces$render_raw_n <- length(r_snps$x$data)
-    traces$render_raw_diff <- length(rd_snp$x$data)
     traces$render_proc_n <- length(n_snps$x$data)
     traces$render_proc_diff <- length(d_snps$x$data)
 
@@ -1446,16 +1455,12 @@ shinyServer(function(input, output, session) {
           "Raw SNP index", plotlyOutput("render_raw_n", height = "1500px")
         ),
         tabPanel(
-          "Raw \u0394SNP index",
-          plotlyOutput("render_raw_diff", height = "1500px")
-        ),
-        tabPanel(
           "Processed SNP density ",
           plotlyOutput("render_proc_n", height = "1500px")
         ),
         tabPanel(
           "Processed \u0394SNP density",
-          plotlyOutput("render_proc_diff", height = "1500px")
+          plotlyOutput("render_proc_diff", height = "3000px")
         ),
         tabPanel(
           "G’ distribution", plotOutput("render_gdistribution")
@@ -1489,7 +1494,6 @@ shinyServer(function(input, output, session) {
         "render_proc_diff",
         "render_gprime",
         "render_raw_n",
-        "render_raw_diff",
         "render_pvalue"
       )
       anno <- annotation()

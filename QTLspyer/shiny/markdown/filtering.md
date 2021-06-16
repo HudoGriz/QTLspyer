@@ -8,7 +8,7 @@ To simplify the search for the best parameters, we can observe the four histogra
 
 The first histogram is of **read depths**. It should be condensed, without long tails into extreme lows or highs.
 
-**Total reference allele frequency** should be as close to a normal distribution as possible.
+**Total reference allele frequency** holds information about number of QTL and their influence. The more the QTLs influence is the same, the more it resembles a normal distribution.
 
 **Per-bulk SNP-index** is expected to contain two small peaks on each
 end and most of the SNPs should be approximately normally distributed around 0.5 in an F2 population.

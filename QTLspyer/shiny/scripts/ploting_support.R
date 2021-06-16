@@ -78,8 +78,8 @@ plot_style <- function(p) {
     scale_color_manual("", values = c("colour" = "#222d32", "#3f9aff", "#3f9aff")) +
     theme(
       strip.text.y = element_text(angle = 0, size = 15),
-      panel.spacing = unit(0.09, "lines"),
-      plot.margin = unit(c(5, 30, 30, 20), "mm")
+      panel.spacing = unit(1, "mm"),
+      plot.margin = unit(c(5, 20, 20, 20), "mm")
     )
 }
 

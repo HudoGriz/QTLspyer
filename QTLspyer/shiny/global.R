@@ -32,7 +32,7 @@ pipeline_scripts <- list.files(
   )
 names(pipeline_scripts) <- c(
   "GATK best practice (Pipeline with BQSR)",
-  "Light weight (Pipeline without BQSR)")
+  "Lightweight (Pipeline without BQSR)")
 
 pipelines_elements <- list(
   "no_bqsr_variant_calling_script.py" = c(

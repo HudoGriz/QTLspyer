@@ -44,7 +44,7 @@ plot_deltaSNP <- function(SNPset, line) {
     scale_color_manual("", values = c(color, "#3f9aff", "#222d32")) +
     theme(
       strip.text.y = element_text(angle = 0, size = 15),
-      panel.spacing = unit(2, "mm"),
+      panel.spacing = unit(1, "mm"),
       plot.margin = unit(c(5, 30, 30, 20), "mm")
     )
 
@@ -97,34 +97,7 @@ plot_raw_snps <- function(data) {
     theme(
       strip.text.y = element_text(angle = 0, size = 15),
       panel.spacing = unit(0.09, "lines"),
-      plot.margin = unit(c(5, 30, 30, 20), "mm")
-    )
-
-  plotly_build(p)
-}
-
-plot_raw_delta_snps <- function(data) {
-  p <- ggplot(data = data) +
-    scale_x_continuous(
-      breaks = seq(
-        from = 0, to = max(data$POS),
-        by = 10^(floor(log10(max(data$POS))))
-      ),
-      labels = format_genomic(),
-      name = "Genomic Position (Mb)"
-    ) +
-    ylim(-0.05, 1.05) +
-    geom_hline(yintercept = 0.5, color = "black", alpha = 0.4) +
-    geom_line(aes(x = POS, y = deltaSNP, color = "Index")) +
-    scale_color_manual("", values = c("Index" = "#222d32")) +
-    ylab("\u0394SNP index") +
-    xlab("Genomic Position (Mb)") +
-    facet_grid(CHROM ~ ., scales = "free_x", space = "free_x") +
-    theme_minimal() +
-    theme(
-      strip.text.y = element_text(angle = 0, size = 15),
-      panel.spacing = unit(0.09, "lines"),
-      plot.margin = unit(c(5, 30, 30, 20), "mm")
+      plot.margin = unit(c(5, 20, 20, 20), "mm")
     )
 
   plotly_build(p)
