@@ -5,7 +5,7 @@ from plumbum import TEE
 from functions import enable_logging, interpret_result, write_result_to_debug
 
 
-class QtlTolls:
+class QtlTools:
     """Calls QTL tools to run in docker container"""
 
     def __init__(self):

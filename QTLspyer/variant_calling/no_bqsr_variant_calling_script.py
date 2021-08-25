@@ -2,7 +2,7 @@
 import sys
 
 from argument_parser import parse
-from tools import QtlTolls
+from tools import QtlTools
 
 
 def main(args):
@@ -16,7 +16,7 @@ def main(args):
     fasta_ref_file = f'input/references/{fasta_ref}'
     vcf_ref_file = f'input/references/{args.ReferenceVCF}'
 
-    qtl = QtlTolls()
+    qtl = QtlTools()
 
     qtl.populate_samples(single_reads=args.SeqSingle)
 

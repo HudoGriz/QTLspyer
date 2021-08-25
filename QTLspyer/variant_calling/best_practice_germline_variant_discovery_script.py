@@ -2,7 +2,7 @@
 import sys
 
 from argument_parser import parse, parse_base_recalibration
-from tools import QtlTolls
+from tools import QtlTools
 
 
 def main(args):
@@ -17,7 +17,7 @@ def main(args):
     vcf_ref_file = f'input/references/{args.ReferenceVCF}'
 
     # Start process
-    qtl = QtlTolls()
+    qtl = QtlTools()
 
     qtl.populate_samples(single_reads=args.SeqSingle)
 
