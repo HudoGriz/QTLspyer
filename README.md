@@ -1,52 +1,47 @@
  <p align="center"><img src="QTLspyer/shiny/www/logo.png" width="200" alt="QTLspyer logo"></p>
 
+[![DOI](https://zenodo.org/badge/344498510.svg)](https://zenodo.org/badge/latestdoi/344498510)
+
 ## Table of contents
 
 > * [QTLspyer](#qtlspyer)
 >   * [Table of contents](#table-of-contents)
 >   * [About](#about)
->   * [Installation](#installation)
+>   * [How to build](#how-to-build)
 >     * [Windows](#windows)
 >     * [Linux](#linux)
 >     * [Advanced](#advanced)
->   * [Usage](#usage)
->     * [Screenshots](#screenshots)
+>   * [Screenshots](#screenshots)
 >   * [Code](#code)
 >     * [Content](#content)
 >     * [Folder structure](#folder-structure)
->     * [Requirements and limitations](#requirements-and-limitations)
+>   * [Requirements and limitations](#requirements-and-limitations)
 >   * [Resources](#resources)
 >   * [License](#license)
 
 
 ## About
 
-This application was created as my master's thesis project. Its goal is to make a **QTL bulk** analysis using NGS data faster, repeatable and user-friendly. This is achieved by using a `python` script which connects **GATK** tools into a customizable pipeline. A `R Shiny` app allows for easy pipeline customization, data filtration and result visualization. 
-To increase the ease of use and portability, QTLspyer is fully contained inside a **Docker** image and can be run on any operating system with Docker support. Furthermore, the user is not required to manually install any software involved in a QTL analysis. The application guides the user through the analysis by providing a detailed description of every required step and setting, while also providing sane default values of each parameter. QTLspyer can analyse data from any organism if correct annotation and reference data is provided.
+ For our goal to simplify the detection of quantitative trait loci (QTL) with the use of WGS data based on the bulk segregant analysis (BSA) method, we developed a software tool named **QTLspyer**. We designed a user-friendly graphical interface using `R shiny`. The QTL detection process was divided into _variant calling_ and _QTL finding_. In the first step, a `Python` script is used to call _single nucleotide variants_ (SNVs) with the **Genome Analysis Toolkit** (GATK). In the second step, the probabilities of potential QTL findings are estimated based on the [G' method](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002255) and [QTL-seq method](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.12105) approach using an `R library` called [QTLseqr](https://github.com/bmansfeld/QTLseqr). Results are presented to the user as data tables of SNPs and QTLs statistical properties and graphically with plots showing QTL probabilities for all genome positions. The application together with all required tools is contained inside a **Docker image**. We demonstrated the accuracy of the used approach with the re-analysis of datasets from published studies.
 
-To simplify the installation process, scripts for starting the app on **Windows 10** and **Linux** have been provided. In order for the scripts to work Docker has to be installed in advance. 
-* Project status: **prototype**
+## How to build
 
-Docker image:
+The app can mainly be build using two methods. The first method is to save and execute the appropriate script inside the designated folder. The second method is to clone this repository to a local computer and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .`. The command should be executed at the same location as the `Dockerfile`. We recommend the first method. Both methods require **Docker**.
 
-* <https://hub.docker.com/repository/docker/hudogriz/qtl_spyer>
-
-## Installation
-
-The installation can be mainly done in two ways. First is save the right installation script inside a designated folder and run it. The second way is to copy this repository to a local computer and build the docker image using the command `docker build -t hudogriz/qtl_spyer:latest .` in the same directory as the `Dockerfile`. I recommend the first way as it is easier. Both steps require a pre-installed **Docker**.
+To simplify the process, scripts for starting the app on **Windows 10** and **Linux** have been provided.
 
 ### Windows
 
-1. Install [**Docker Desktop**](https://hub.docker.com/editions/community/docker-ce-desktop-windows) for Windows.  
-2. Create a designated folder _(recommended: Use lower cases for name and create it at C:)_.  
+1. _(Optional)_ Install [**Docker Desktop**](https://hub.docker.com/editions/community/docker-ce-desktop-windows) for Windows.  
+2. Create a designated folder _(recommended: Use lower cases for the name and create it at C:)_.  
 3. Download `Run_qtlspyer_on_windows10.bat` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_windows10.bat)
 4. Place `Run_qtlspyer_on_windows10.bat` into the created folder.  
-5. Run `Run_qtlspyer_on_windows10.bat` as **Administrator**.
+5. Run `Run_qtlspyer_on_windows10.bat` as a **Administrator**.
 6. _(Optional)_ Redirect your internet browser to [localhost:3838](http://localhost:3838/).
 
 ### Linux
 
-1. Install [**Docker**](https://docs.docker.com/engine/install/ubuntu/) for Linux.  
+1. _(Optional)_ Install [**Docker**](https://docs.docker.com/engine/install/ubuntu/) for Linux.  
 2. Create a designated folder.  
 3. Download `Run_qtlspyer_on_linux.sh` from [here](https://raw.githubusercontent.com/HudoGriz/QTLspyer/main/Run_qtlspyer_on_linux.sh).   
 4. Make the script executable with `chmod +x Run_qtlspyer_on_linux.sh`.  
@@ -55,44 +50,46 @@ The installation can be mainly done in two ways. First is save the right install
 
 ### Advanced
 
-1. Download **zip** or pull the repository to local with `git clone git@github.com:HudoGriz/QTLspyer.git`.  
-2. Build **Docker image** `docker build -t hudogriz/qtl_spyer:latest .` from the location of the `Dockerfile`.  
+1. Download **zip** or pull the repository with `git clone git@github.com:HudoGriz/QTLspyer.git`.  
+2. Build the **Docker image** with `docker build -t hudogriz/qtl_spyer:latest .`.  
 3. Lunch the **container** with `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v $(pwd)/QTLspyer/:/QTLspyer hudogriz/qtl_spyer:latest`.  
 4. _(Optional)_ For Windows use `docker run -d --rm --init -p 3838:3838 --name qtl_spy -v %~dp0\QTLspyer\:\QTLspyer hudogriz/qtl_spyer:latest`.  
 5. Redirect your browser to [localhost:3838](http://localhost:3838/).  
 
-## Usage
 
-The main use of the app is to run the **GATK** - _Germline short variant discovery_ pipeline using a _GUI_. Further functionalities allow for viewing of **fastQC** reports, variant data filtration and visualization. Interactive data filtration is achieved by four histograms visualizing the cumulative data distribution changes. The **QTL**s estimations are based on [QTLseqr](https://github.com/bmansfeld/QTLseqr) a `library` for **R**. Two prime methods are used for **QTL** estimation: [QTL-seq method](https://onlinelibrary.wiley.com/doi/full/10.1111/tpj.12105) and [G prime method](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002255). The data is visualized with interactive plots depicting variables vs. genome position. The addition of a `.gvc` enables the plotting of gene locations. Data tables containing statistics about individual **SNP**s and **QTL**s can be viewed and downloaded. In detail information about the process and users recommended action can also be found inside the **Shiny** app.
+Docker image:
 
-### Screenshots
+* <https://hub.docker.com/repository/docker/hudogriz/qtl_spyer>
+
+
+## Screenshots
 
 <p align="left"><img src="QTLspyer/shiny/www/menu.png" width="200" alt="Variant calling tab"></p>
-<i>Side menu for selection of app functionalities. </i>
+<i>The side menu enables switching between the app tabs. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/variant_calling.png" width="700" alt="Variant calling tab"></p>
-<i>Control panel that allows for customization of the variant calling pipeline. </i>
+<i>Tab for customization and execution of the variant calling pipelines. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/fastQC.png" width="700" alt="FastQC report tab"></p>
-<i>Panel where FastQC reports can be viewed in new browser windows. </i>
+<i>Tab where created FastQC reports can be viewed. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/filtering.png" width="700" alt="VCF filtering tab"></p>
-<i>Panel with filter parameters selection and filtering feedback data. </i>
+<i>Tab for filtering SNPs. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/visualization.png" width="700" alt="Data visualization tab"></p>
-<i>Panel for running QTL estimations and observing the results. </i>
+<i>Tab for running QTL estimations. Below, the results are presented as interactive plots. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/tables.png" width="700" alt="Variant calling tab"></p>
-<i>Panel with the results. </i>
+<i>Tables with numerical results. </i>
 <br/><br/>
 <br/><br/>
 <p align="left"><img src="QTLspyer/shiny/www/p_stat_example.png" width="700" alt="Variant calling tab"></p>
-<i>Example of exported p-value visualization. </i>
+<i>Plot showing p-values for genome positions per chromosome. The reference data is from a QTL study done on yeast by Pačnik et al. (2021). </i>
 <br/><br/>
 <br/><br/>
 
@@ -101,7 +98,7 @@ The main use of the app is to run the **GATK** - _Germline short variant discove
 
 ### Content
 
-The code is organized into two parts. The first part is in `python`. A `class` object is created which methods call the required tool and evaluate the output. These methods are used to code a pipeline which is saved as an executable python script. The shiny app is used to create the appropriate command line for running the executable script. Active watchers observe changes in the log files and report back on the pipeline progression.
+The app consist of `Python` and `R` code. The _variant calling_ pipelines are created using `Python`. The command lines for running the boinfromatics tools are defined as `methods` inside a `class`.
 
 ### Folder structure
 
@@ -114,18 +111,18 @@ The code is organized into two parts. The first part is in `python`. A `class` o
     │   ├── annotation                  # Expects genome annotation (.gtf)
     │   ├── references                  # Expects genome references (.fasta & .vcf)
     │   └── sample_data                 # Expects sample read sequences (.fastq)
-    └── output
-        ├── aligned                     # Sequence alignment files location (.bam)
-        ├── fastqc                      # FastQC Quality reports location (.html & .zip)
-        ├── trimmed                     # Trimmed read sequences location (.fasqc)
-        └── GATK                        # GATK tools for variant calling output location
-            ├── VCFs                    # Germline Variant called files and their indexes (.vcf & .tbi)
-            ├── nonfiltered             # SNPs selected out of variants and their indexes (.vcf & .idx)
+    └── output                          # Output files
+        ├── aligned                     # Aligned sequences (.bam)
+        ├── fastqc                      # FastQC Quality reports (.html & .zip)
+        ├── trimmed                     # Trimmed read sequences (.fasqc)
+        └── GATK                        # Output of GATK tools
+            ├── VCFs                    # Germline Variant files and their indexes (.vcf & .tbi)
+            ├── nonfiltered             # Unfiltered SNPs selected out of variants and their indexes (.vcf & .idx)
             └── tables                  # VCF files transformed to tables (.snps.table)
 
-### Requirements and limitations
+## Requirements and limitations
 
-The variant calling pipeline is resource intensive. The recommended specs are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmark processes with 1-3 GB `.fastq` samples took 2-4 hours on 32GB of RAM and 8 core processors. Samples between 5-10 GB can reach up to 15 hours. Make sure to have enough space on the hard drive. For every GB of input data we can expect on average 7 GB of output information.
+The most intensive step is the execution of the variant calling pipeline. The recommended specs are above 8GB of RAM. The minimum is 4GB. A CPU that allows multithreading is recommended. Benchmarking was performed on a computer with 32GB of RAM and a Intel i7 CPU (3.60Hz & 8 threads). Processing 1-3 GB `.fastq` samples took 2-4 hours. Samples between 5-10 GB can reach up to 15 hours. Make sure to have enough space on the hard drive. For every GB of input data we can expect on average 7 GB of output data.
  
 
 ## Resources
@@ -150,16 +147,10 @@ G prime method:
 > [doi.org/10.1371/journal.pcbi.1002255](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002255)
 
 GATK:
-> Collins, R.L., Brand, H., Karczewski, K.J. et al. (2020)
-> A structural variation reference for medical and population genetics.
-> Nature 581, 444–451.
-> [doi.org/10.1038/s41586-020-2287-8](https://doi.org/10.1038/s41586-020-2287-8)
-
-> Werling, D.M., Brand, H., An, JY. et al. (2018)
-> An analytical framework for whole-genome sequence association studies and 
-> its implications for autism spectrum disorder. 
-> Nat Genet 50, 727–736.
-> [doi.org/10.1038/s41588-018-0107-y](https://doi.org/10.1038/s41588-018-0107-y)
+> McKenna A., Hanna M., Banks E., Sivachenko A., Cibulskis K., Kernytsky A., Garimella K., Altshuler D., Gabriel S., Daly M., DePristo MA. (2010)
+> The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data.
+> Genome Res, 20:1297-303.
+> [doi.org/10.1101/gr.107524.110](https://doi.org/10.1101/gr.107524.110)
 
 FastQC:
 > Andrews, S. (2010). 
@@ -198,6 +189,12 @@ Docker:
 > Merkel, D. (2014). 
 > Docker: lightweight linux containers for consistent development and deployment. 
 > Linux Journal, 2014(239), 2.
+
+Reference study:
+> Pačnik K., Ogrizović M., Diepold M., Eisenberg T., Žganjar M., Žun G., Kužnik B., Gostinčar C., Curk T., Petrovič U., Natter K. (2021)
+> Identification of novel genes involved in neutral lipid storage by quantitative trait loci analysis of Saccharomyces cerevisiae.
+> BMC Genomics, 22, 1: 110.
+> [doi.org/10.1186/s12864-021-07417-4](http://doi.org/10.1186/s12864-021-07417-4)
 
 Thanks:
 > To my mentors [Assist. Prof. Dr. Cene Gostinčar](https://scholar.google.com/citations?user=D82dKecAAAAJ&hl=en) and [Dr. Janez Kokosar](https://github.com/jkokosar).  
