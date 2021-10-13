@@ -23,6 +23,7 @@ def main(args):
     qtl.make_references(fasta_ref_file=args.Reference, ref_vcf=args.ReferenceVCF)
 
     for sample in qtl.ori_samples:
+        #TODO: Change order.
 
         if args.SeqSingle == "TRUE":
             r = qtl.ori_samples[sample]
