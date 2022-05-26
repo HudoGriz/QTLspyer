@@ -1,0 +1,15 @@
+configfile: "/QTLspyer/output/config.yaml"
+
+from scripts.functions import enable_logging
+
+logger = enable_logging(
+    log_name='process_logger',
+    log_file='/QTLspyer/log/sample_processing.log'
+    )
+st_logger = enable_logging(
+    log_name='standard_output_logger',
+    log_file='/QTLspyer/log/standard_output.log'
+    )
+
+picard_PATH = '/usr/picard/picard.jar'
+

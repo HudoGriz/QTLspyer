@@ -17,6 +17,7 @@ QTLspyer/output/
 QTLspyer/*.bai
 QTLspyer/*.bam
 QTLspyer/*.table
+CHANGELOG
 
 # vscode
 .vscode/

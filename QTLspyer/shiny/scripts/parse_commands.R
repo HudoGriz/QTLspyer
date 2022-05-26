@@ -10,35 +10,46 @@ make_command <- function(steps) {
   }
 }
 
+
 BBduk <- function(
-  n_cores, ktrim, qtrim, trimq, k, mink, hdist, ftm, chastityfilter, minlen
+  ktrim, qtrim, trimq, k, mink, hdist, ftm, chastityfilter, minlen
   ) {
-  if (is.null(n_cores)) {
-    return(NULL)
-  } else {
-    paste0(
-      "--Bbduk_n_cores ", n_cores,
-      " --Bbduk_ktrim ", ktrim,
-      " --Bbduk_qtrim ", qtrim,
-      " --Bbduk_trimq ", trimq,
-      " --Bbduk_k ", k,
-      " --Bbduk_mink ", mink,
-      " --Bbduk_hdist ", hdist,
-      " --Bbduk_ftm ", ftm,
-      " --Bbduk_chastityfilter ", chastityfilter,
-      " --Bbduk_minlen ", minlen
-    )
-  }
+  paste0(
+    " --Bbduk_ktrim ", ktrim,
+    " --Bbduk_qtrim ", qtrim,
+    " --Bbduk_trimq ", trimq,
+    " --Bbduk_k ", k,
+    " --Bbduk_mink ", mink,
+    " --Bbduk_hdist ", hdist,
+    " --Bbduk_ftm ", ftm,
+    " --Bbduk_chastityfilter ", chastityfilter,
+    " --Bbduk_minlen ", minlen
+  )
 }
 
-HaplotypeCaller <- function(
-                            ploidy, conf) {
+
+HaplotypeCaller <- function(ploidy, conf) {
   if (is.null(ploidy)) {
     return(NULL)
   } else {
     paste0(
-      "--HaplotypeCaller_ploidy ", ploidy,
+      " --HaplotypeCaller_ploidy ", ploidy,
       " --HaplotypeCaller_confidence ", conf
+    )
+  }
+}
+
+
+GlobalOptions <- function(
+  cores, yaml, jobs
+) {
+  if (is.null(cores) | is.null(yaml) | is.null(jobs)) {
+    return(NULL)
+  } else {
+    paste0(
+      " --CreateYAML ", yaml,
+      " --Cores ", cores,
+      " --Jobs ", jobs
     )
   }
 }

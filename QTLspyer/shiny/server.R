@@ -13,28 +13,28 @@ shinyServer(function(input, output, session) {
     render_raw_n = NULL
   )
 
-  ref_fastas <- list.files(path = "../input/references/", pattern = "\\.fasta$")
+  ref_fastas <- list.files(path = "/QTLspyer/input/references/", pattern = "\\.fasta$")
   ref_fastas_gz <- list.files(
-    path = "../input/references/", pattern = "\\.fasta.gz$"
+    path = "/QTLspyer/input/references/", pattern = "\\.fasta.gz$"
   )
   ref_fastas <- c(ref_fastas, ref_fastas_gz)
   if (identical(ref_fastas, character(0))) {
     ref_fastas <- NA
   }
 
-  ref_vcf <- list.files(path = "../input/references/", pattern = "\\.vcf.gz$")
-  ref_vcf_gz <- list.files(path = "../input/references/", pattern = "\\.vcf$")
+  ref_vcf <- list.files(path = "/QTLspyer/input/references/", pattern = "\\.vcf.gz$")
+  ref_vcf_gz <- list.files(path = "/QTLspyer/input/references/", pattern = "\\.vcf$")
   ref_vcf <- c(ref_vcf, ref_vcf_gz)
   if (identical(ref_vcf, character(0))) {
     ref_vcf <- NA
   }
 
-  adapters <- list.files(path = "../input/adapters/", pattern = "\\.fa")
+  adapters <- list.files(path = "/QTLspyer/input/adapters/", pattern = "\\.fa")
   if (identical(adapters, character(0))) {
     adapters <- NA
   }
 
-  ref_gtf <- list.files(path = "../input/annotation/", pattern = "\\.gtf$")
+  ref_gtf <- list.files(path = "/QTLspyer/input/annotation/", pattern = "\\.gtf$")
   if (identical(ref_gtf, character(0))) {
     ref_gtf <- NA
   }
@@ -83,21 +83,6 @@ shinyServer(function(input, output, session) {
         bsTooltip(
           "ex_name",
           "Name to be included in final .vcf and .table file name.",
-          placement = "left", trigger = "hover", options = NULL
-        ),
-        prettyRadioButtons(
-          inputId = "pipe_script",
-          label = "Workflow",
-          choices = pipeline_scripts,
-          status = "primary",
-          fill = TRUE
-        ),
-        bsTooltip(
-          "pipe_script",
-          paste(
-            "Determines the sequence of tools to use for obtaining .vcf files.",
-            "More in info."
-          ),
           placement = "left", trigger = "hover", options = NULL
         ),
         prettyCheckboxGroup(
@@ -199,7 +184,6 @@ shinyServer(function(input, output, session) {
         ),
         uiOutput("control_button"),
         hr(),
-        uiOutput("pipe_elements"),
         uiOutput("advanced_tools_settings")
       ),
       mainPanel(
@@ -221,33 +205,6 @@ shinyServer(function(input, output, session) {
       )
     )
   )
-
-  observeEvent(input$pipe_script, {
-    choices <- pipelines_elements[[input$pipe_script]]
-    choices <- as.character(as.vector(choices))
-
-    output$pipe_elements <- renderUI({
-      tagList(
-        prettyCheckboxGroup(
-          inputId = "pipeline_includes",
-          label = "Pipeline steps",
-          choices = choices,
-          selected = choices,
-          status = "primary",
-          fill = TRUE
-        ),
-        bsTooltip(
-          "pipeline_includes",
-          paste(
-            "Should primary be used for skipping tools after a failed run.",
-            "Tools still expect the output files from previous tools as input.",
-            "Can also be used for gradually executing pipeline steps."
-          ),
-          placement = "left", trigger = "hover", options = NULL
-        )
-      )
-    })
-  })
 
   observeEvent(input$advanced_tools, {
     if (isTRUE(input$advanced_tools)) {
@@ -272,7 +229,7 @@ shinyServer(function(input, output, session) {
           title = "Global",
           numericInput(
             "global_cores",
-            label = "Number of cores",
+            label = "Number of cores per tool",
             value = 8, step = 1, min = 1
           ),
           bsTooltip(
@@ -280,6 +237,32 @@ shinyServer(function(input, output, session) {
             paste(
               "Some tools are able to take advantage of multithreading",
               "for greatly reduced processing time."
+            ),
+            placement = "left", trigger = "hover", options = NULL
+          ),
+          numericInput(
+            "global_jobs",
+            label = "Number of jobs to run simultaneously",
+            value = 1, step = 1, min = 1
+          ),
+          bsTooltip(
+            "global_jobs",
+            paste(
+              "The max number of parallel jobs."
+            ),
+            placement = "left", trigger = "hover", options = NULL
+          ),
+          prettyCheckbox(
+            inputId = "global_yaml",
+            label = "Create new config file",
+            value = TRUE,
+            status = "primary",
+            fill = TRUE
+          ),
+          bsTooltip(
+            "global_yaml",
+            paste(
+              "Should the process create a new config.yaml file or use an existing one."
             ),
             placement = "left", trigger = "hover", options = NULL
           ),
@@ -475,7 +458,7 @@ shinyServer(function(input, output, session) {
 
   log_data <- reactiveFileReader(
     1000,
-    session = session, "../log/sample_processing.log", readLines
+    session = session, "/QTLspyer/log/sample_processing.log", readLines
   )
   output$log <- renderText({
     paste(log_data(), collapse = "\n")
@@ -483,7 +466,7 @@ shinyServer(function(input, output, session) {
 
   log_data_so <- reactiveFileReader(
     1000,
-    session = session, "../log/standard_output.log", readLines
+    session = session, "/QTLspyer/log/standard_output.log", readLines
   )
   output$so_log <- renderText({
     paste(log_data_so(), collapse = "\n")
@@ -507,7 +490,7 @@ shinyServer(function(input, output, session) {
 
     if (input$advanced_tools) {
       options_bbduk <- BBduk(
-        n_cores = input$global_cores, ktrim = input$bbduk_ktrim,
+        ktrim = input$bbduk_ktrim,
         qtrim = input$bbduk_qtrim, trimq = input$bbduk_trimq,
         k = input$bbduk_k, mink = input$bbduk_mink,
         hdist = input$bbduk_hdist, ftm = input$bbduk_ftm,
@@ -519,13 +502,18 @@ shinyServer(function(input, output, session) {
         ploidy = input$hc_ploidy, conf = input$hc_conf
       )
 
-      advanced_tool_options <- paste(options_bbduk, options_hc)
+      options_global <- GlobalOptions(
+        cores = input$global_cores, yaml = input$global_yaml,
+        jobs = inptu$global_jobs
+      )
+
+      advanced_tool_options <- paste(options_bbduk, options_hc, options_global)
     } else {
       advanced_tool_options <- ""
     }
 
     script_command <- paste0(
-      "../variant_calling/", input$pipe_script,
+      "/QTLspyer/variant_calling/variant_calling.py",
       " --experimentName ", input$ex_name,
       " --Reference ", input$ref_fasta,
       " --Adapters ", input$adapters_file,
@@ -538,6 +526,8 @@ shinyServer(function(input, output, session) {
       " ", pipeline_options,
       " ", advanced_tool_options
     )
+
+    print(script_command)
 
     future({
       system(script_command, wait = TRUE)
@@ -584,11 +574,11 @@ shinyServer(function(input, output, session) {
       system(paste("kill -15", as.numeric(pid)))
     }
 
-    system("../variant_calling/force_report.py")
+    system("/QTLspyer/variant_calling/scripts/force_report.py")
   })
 
   observeEvent(input$renew_log, {
-    system("../variant_calling/restore_logs.py")
+    system("/QTLspyer/variant_calling/scripts/restore_logs.py")
   })
 
   ##########
@@ -630,15 +620,15 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$look_for_fastqc, {
     fastqc_raw <- list.files(
-      path = "../output/fastqc/untrimmed/", pattern = "\\.html$"
+      path = "/QTLspyer/output/fastqc/untrimmed/", pattern = "\\.html$"
     )
     fastqc_tri <- list.files(
-      path = "../output/fastqc/trimmed/", pattern = "\\.html$"
+      path = "/QTLspyer/output/fastqc/trimmed/", pattern = "\\.html$"
     )
 
     for (fqc in fastqc_raw) {
       file.copy(
-        paste0("../output/fastqc/untrimmed/", fqc),
+        paste0("/QTLspyer/output/fastqc/untrimmed/", fqc),
         paste0("./www/fastqc/untrimmed"),
         overwrite = TRUE
       )
@@ -646,7 +636,7 @@ shinyServer(function(input, output, session) {
 
     for (fqc in fastqc_tri) {
       file.copy(
-        paste0("../output/fastqc/trimmed/", fqc),
+        paste0("/QTLspyer/output/fastqc/trimmed/", fqc),
         paste0("./www/fastqc/trimmed"),
         overwrite = TRUE
       )
@@ -739,7 +729,7 @@ shinyServer(function(input, output, session) {
 
   observeEvent(input$table_refresh, {
     files <- list.files(
-      path = "../output/GATK/tables/", pattern = "\\.table$"
+      path = "/QTLspyer/output/GATK/tables/", pattern = "\\.table$"
     )
 
     if (is.null(input$ex_name)) {
@@ -760,14 +750,14 @@ shinyServer(function(input, output, session) {
 
   observeEvent(req(input$table_picked), {
     col.names <- read.table(
-      paste0("../output/GATK/tables/", input$table_picked),
+      paste0("/QTLspyer/output/GATK/tables/", input$table_picked),
       header = TRUE,
       nrows = 1
     )
 
     col.names <- colnames(col.names)
     col.names <- col.names[- (1:4)]
-    bulks <- unique(gsub("\\..*", "", col.names))
+    bulks <- unique(gsub("\\/QTLspyer*", "", col.names))
 
     output$low_and_high <- renderUI(
       tagList(
@@ -831,7 +821,7 @@ shinyServer(function(input, output, session) {
 
     # Import vcf tables
     progress$inc(1 / n, detail = paste("Reading table")) # 1
-    raw_data <- paste0("../output/GATK/tables/", input$table_picked)
+    raw_data <- paste0("/QTLspyer/output/GATK/tables/", input$table_picked)
 
     df <- importFromGATK(
       file = raw_data,
